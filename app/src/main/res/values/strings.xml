@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">P1PMDM</string>
+    <string name="alDiag_posButton">Aceptar</string>
+    <string name="alDiag_canButton">Cancelar</string>
+    <string name="alDiag_title">Nuevo entrenamiento</string>
+    <string name="horasTxt">Horas</string>
+    <string name="minsTxt">Mins</string>
+    <string name="segsTxt">Segs</string>
+    <string name="distanciaTxt">Distancia (m)</string>
+    <string name="fechaTxt">Fecha</string>
+    <string name="fechaTextView">Fecha: </string>
+    <string name="distanciaTextView">Distancia: </string>
+    <string name="tiempoTextView">Tiempo: </string>
+    <string name="minsKm">Mins/km: </string>
+    <string name="velMed">Velocidad media: </string>
+    <string name="alDiag_train">Entrenamiento</string>
+    <string name="mostrar">Mostrar</string>
+    <string name="modificar">Modificar</string>
+    <string name="borrar">Eliminar</string>
+    <string name="estadisticas">Estadísticas</string>
+    <string name="add">Añadir</string>
+    <string name="kmTotales">Kilometros totales</string>
+    <string name="mins_km">Mins/km</string>
+    <string name="_00">00</string>
+    <string name="distanciaTwo">Distancia: </string>
+    <string name="toast">Introduce la distancia recorrida</string>
+
+</resources>
