@@ -3,6 +3,7 @@ package com.example.p1pmdm.UI;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.text.InputFilter;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,6 +22,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.p1pmdm.R;
 import com.example.p1pmdm.core.Entrenamiento;
+import com.example.p1pmdm.core.InputFilterMinMax;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -75,7 +77,9 @@ public class MainActivity extends AppCompatActivity {
         final EditText distEd = customLayout.findViewById(R.id.distanciaEditText);
         final EditText horasEd = customLayout.findViewById(R.id.horasEditText);
         final EditText minsEd = customLayout.findViewById(R.id.minutosEditText);
+        minsEd.setFilters(new InputFilter[]{new InputFilterMinMax("0","60")});
         final EditText segsEd = customLayout.findViewById(R.id.segundosEditText);
+        segsEd.setFilters(new InputFilter[]{new InputFilterMinMax("0","60")});
 
         builder.setPositiveButton(R.string.alDiag_posButton, new DialogInterface.OnClickListener() {
             @Override
@@ -139,17 +143,6 @@ public class MainActivity extends AppCompatActivity {
         TextView velMed = customLayout.findViewById(R.id.textViewVelMedia);
         velMed.setText(getString(R.string.velMed)+String.valueOf(velMedia));
 
-//        LinearLayout layoutVer = new LinearLayout(MainActivity.this);
-//
-//        layoutVer.setOrientation(LinearLayout.VERTICAL);
-//        layoutVer.addView(fechaTextView);
-//        layoutVer.addView(distanciaTextView);
-//        layoutVer.addView(tiempoTextView);
-//        layoutVer.addView(minsxKm);
-//        layoutVer.addView(velMed);
-//
-//
-//        dialogBuilder.setView(layoutVer);
         dialogBuilder.create().show();
     }
     public void modificar(){
@@ -206,7 +199,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreateContextMenu(menu, v, menuInfo);
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.menu_contextual, menu);
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
     }
 
     @Override
