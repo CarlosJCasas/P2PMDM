@@ -71,9 +71,11 @@ public class MainActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         String pattern = "dd-MM-yyyy";
         final String fecha =new SimpleDateFormat(pattern).format(new Date());
+        
         final View customLayout = getLayoutInflater().inflate(R.layout.alert_dialog_train,null);
         builder.setView(customLayout);
         builder.setTitle(R.string.alDiag_train);
+
         final EditText distEd = customLayout.findViewById(R.id.distanciaEditText);
         final EditText horasEd = customLayout.findViewById(R.id.horasEditText);
         final EditText minsEd = customLayout.findViewById(R.id.minutosEditText);
@@ -200,7 +202,6 @@ public class MainActivity extends AppCompatActivity {
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.menu_contextual, menu);
     }
-
     @Override
     public boolean onContextItemSelected(@NonNull MenuItem item) {
         if(item.getItemId()==R.id.mostrar){
@@ -228,14 +229,11 @@ public class MainActivity extends AppCompatActivity {
         }
         return true;
     }
-
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
