@@ -24,5 +24,7 @@
     <string name="_00">00</string>
     <string name="distanciaTwo">Distancia: </string>
     <string name="toast">Introduce la distancia recorrida</string>
+    <string name="maxSegs">59</string>
+    <string name="minSegs">00</string>
 
 </resources>

@@ -76,9 +76,9 @@ public class MainActivity extends AppCompatActivity {
         final EditText distEd = customLayout.findViewById(R.id.distanciaEditText);
         final EditText horasEd = customLayout.findViewById(R.id.horasEditText);
         final EditText minsEd = customLayout.findViewById(R.id.minutosEditText);
-        minsEd.setFilters(new InputFilter[]{new InputFilterMinMax("0","60")});
+        minsEd.setFilters(new InputFilter[]{new InputFilterMinMax(getString(R.string.minSegs),getString(R.string.maxSegs))});
         final EditText segsEd = customLayout.findViewById(R.id.segundosEditText);
-        segsEd.setFilters(new InputFilter[]{new InputFilterMinMax("0","60")});
+        segsEd.setFilters(new InputFilter[]{new InputFilterMinMax(getString(R.string.minSegs),getString(R.string.maxSegs))});
         builder.setPositiveButton(R.string.alDiag_posButton, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
