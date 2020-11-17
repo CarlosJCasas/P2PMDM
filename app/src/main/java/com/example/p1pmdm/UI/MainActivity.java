@@ -2,7 +2,9 @@ package com.example.p1pmdm.UI;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.InputFilter;
 import android.view.ContextMenu;
@@ -67,7 +69,45 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void addTraining(){
+    @Override
+    protected void onResume() {
+        super.onResume();
+        EditText nombre, edad, altura, peso;
+        nombre = findViewById(R.id.nombreEd);
+        edad = findViewById(R.id.edadEd);
+        altura = findViewById(R.id.alturaEd);
+        peso = findViewById(R.id.pesoEd);
+
+        Context context = getApplicationContext();
+        SharedPreferences sharedPreferences = context.getSharedPreferences(getString(R.string.misPreferencias),Context.MODE_PRIVATE);
+        nombre.setText(sharedPreferences.getString(getString(R.string.nombre), getString(R.string.nombre)));
+        edad.setText(sharedPreferences.getString(getString(R.string.edad), getString(R.string.edad)));
+        altura.setText(sharedPreferences.getString(getString(R.string.altura), getString(R.string.altura)));
+        peso.setText(sharedPreferences.getString(getString(R.string.peso), getString(R.string.peso)));
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        EditText nombre, edad, altura, peso;
+        nombre = findViewById(R.id.nombreEd);
+        edad = findViewById(R.id.edadEd);
+        altura = findViewById(R.id.alturaEd);
+        peso = findViewById(R.id.pesoEd);
+
+        Context context = getApplicationContext();
+        SharedPreferences sharedPreferences = context.getSharedPreferences(getString(R.string.misPreferencias),Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(getString(R.string.nombre), nombre.getText().toString());
+        editor.putString(getString(R.string.edad), edad.getText().toString());
+        editor.putString(getString(R.string.altura), altura.getText().toString());
+        editor.putString(getString(R.string.peso), peso.getText().toString());
+
+        editor.apply();
+    }
+
+    public void addTraining(){
         final Entrenamiento[] train = new Entrenamiento[1];
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         final View customLayout = getLayoutInflater().inflate(R.layout.alert_dialog_train,null);
@@ -176,6 +216,7 @@ public class MainActivity extends AppCompatActivity {
             velMedia = ((double)MainActivity.this.entrenamientos.get(position).getDistancia()/(double)1000) / horas;
             formattedVelMedia = String.format("%.2f", velMedia);
         }
+
         TextView velMed = customLayout.findViewById(R.id.textViewVelMedia);
         velMed.setText(getString(R.string.velMed) + formattedVelMedia + getString(R.string.kmH));
         dialogBuilder.create().show();
