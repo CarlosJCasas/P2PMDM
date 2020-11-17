@@ -5,5 +5,6 @@ import androidx.room.Query;
 
 @Dao
 public interface TareaDao {
-    @Query("SELECT * FROM ")
+//    @Query("SELECT * FROM tarea")
+//    List<Tarea> getTareas();
 }

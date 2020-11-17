@@ -1,23 +1,22 @@
 package com.example.p1pmdm.UI;
 
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.InputFilter;
 import android.view.ContextMenu;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.p1pmdm.R;
@@ -26,8 +25,9 @@ import com.example.p1pmdm.core.InputFilterMinMax;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
+
 
 public class MainActivity extends AppCompatActivity {
     private ArrayList<String> itemList;
@@ -35,6 +35,9 @@ public class MainActivity extends AppCompatActivity {
     private ArrayAdapter<String> adaptadorBorrar;
     private ArrayList<Entrenamiento> entrenamientos;
     private int posicion;
+    private EditText fechaEd;
+    private String fecha;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
         ListView listView = this.findViewById(R.id.viewList1);
         FloatingActionButton floatButton = this.findViewById(R.id.floatingActionButton2);
         listView.setLongClickable(true);
-        listAdapter = new ArrayAdapter<>(this.getApplicationContext(),android.R.layout.simple_list_item_single_choice,this.itemList);
+        listAdapter = new ArrayAdapter<>(this.getApplicationContext(),android.R.layout.simple_list_item_1,this.itemList);
         adaptadorBorrar = new ArrayAdapter<>(this.getApplicationContext(), android.R.layout.simple_list_item_multiple_choice,this.itemList);
         listView.setAdapter(this.listAdapter);
         registerForContextMenu(listView);
@@ -68,11 +71,28 @@ public class MainActivity extends AppCompatActivity {
     private void addTraining(){
         final Entrenamiento[] train = new Entrenamiento[1];
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        String pattern = "dd-MM-yyyy";
-        final String fecha =new SimpleDateFormat(pattern).format(new Date());
+//        String pattern = "dd-MM-yyyy";
+//        final String fecha =new SimpleDateFormat(pattern).format(new Date());
         final View customLayout = getLayoutInflater().inflate(R.layout.alert_dialog_train,null);
         builder.setView(customLayout);
-        builder.setTitle(R.string.alDiag_train);
+
+        TextView title = new TextView(this);
+        title.setText(R.string.alDiag_train);
+        title.setTextSize(25);
+        title.setPadding(25,25,25,25);
+        title.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+        title.setTextColor(getResources().getColor(R.color.blanco));
+        title.setGravity(Gravity.CENTER);
+        builder.setCustomTitle(title);
+
+        fechaEd = customLayout.findViewById(R.id.fechaEditText);
+        fechaEd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDatePickerDialog();
+            }
+        });
+
         final EditText distEd = customLayout.findViewById(R.id.distanciaEditText);
         final EditText horasEd = customLayout.findViewById(R.id.horasEditText);
         final EditText minsEd = customLayout.findViewById(R.id.minutosEditText);
@@ -140,11 +160,29 @@ public class MainActivity extends AppCompatActivity {
     public void modificar(){
         final Entrenamiento[] train = new Entrenamiento[1];
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        String pattern = "dd-MM-yyyy";
-        final String[] fecha = {new SimpleDateFormat(pattern).format(new Date())};
+//        String pattern = "dd-MM-yyyy";
+//        final String[] fecha = {new SimpleDateFormat(pattern).format(new Date())};
         final View customLayout = getLayoutInflater().inflate(R.layout.alert_dialog_train,null);
         builder.setView(customLayout);
-        builder.setTitle(R.string.modificar);
+
+        TextView title = new TextView(this);
+        title.setText(R.string.modificar);
+        title.setTextSize(25);
+        title.setPadding(25,25,25,25);
+        title.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+        title.setTextColor(getResources().getColor(R.color.blanco));
+        title.setGravity(Gravity.CENTER);
+        builder.setCustomTitle(title);
+
+        fechaEd = customLayout.findViewById(R.id.fechaEditText);
+        fechaEd.setHint(entrenamientos.get(posicion).getFecha());
+        fechaEd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDatePickerDialog();
+            }
+        });
+
         final EditText distEd = customLayout.findViewById(R.id.distanciaEditText);
         distEd.setHint(String.valueOf(entrenamientos.get(posicion).getDistancia()));
         final EditText horasEd = customLayout.findViewById(R.id.horasEditText);
@@ -153,6 +191,7 @@ public class MainActivity extends AppCompatActivity {
         minsEd.setHint(String.valueOf(entrenamientos.get(posicion).getMinutos()));
         final EditText segsEd = customLayout.findViewById(R.id.segundosEditText);
         segsEd.setHint(String.valueOf(entrenamientos.get(posicion).getSegundos()));
+
         builder.setPositiveButton(R.string.alDiag_posButton, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -172,8 +211,11 @@ public class MainActivity extends AppCompatActivity {
                 if(!distEd.getText().toString().isEmpty()) {
                     dist = Integer.parseInt(distEd.getText().toString());
                 }
-                fecha[0] = entrenamientos.get(posicion).getFecha();
-                train[0] = new Entrenamiento(fecha[0],dist,horas,mins,segs);
+                String fechaAntigua = entrenamientos.get(posicion).getFecha();
+                if(!fechaEd.getText().toString().isEmpty()){
+                    fechaAntigua = fechaEd.getText().toString();
+                }
+                train[0] = new Entrenamiento(fechaAntigua,dist,horas,mins,segs);
                 String texto = train[0].toString();
                 MainActivity.this.listAdapter.remove(itemList.get(posicion));
                 MainActivity.this.listAdapter.add(texto);
@@ -298,5 +340,26 @@ public class MainActivity extends AppCompatActivity {
         }else{
             return false;
         }
+    }
+
+    private void showDatePickerDialog(){
+        int day, month, year;
+        final Calendar calendario = Calendar.getInstance();
+        day = calendario.get(Calendar.DAY_OF_MONTH);
+        month = calendario.get(Calendar.MONTH);
+        year = calendario.get(Calendar.YEAR);
+        DatePickerDialog datePickerDialog = new DatePickerDialog(MainActivity.this, new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year1, int month1, int dayOfMonth) {
+                calendario.set(Calendar.DAY_OF_MONTH,dayOfMonth);
+                calendario.set(Calendar.MONTH, month1);
+                calendario.set(Calendar.YEAR, year1);
+                String selectedDate = dayOfMonth+"/"+month1+"/"+year1;
+                fecha = selectedDate;
+                fechaEd.setText(selectedDate);
+            }
+        },year, month,day);
+        datePickerDialog.show();
+
     }
 }

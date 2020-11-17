@@ -2,15 +2,30 @@ package com.example.p1pmdm.core;
 
 import android.widget.EditText;
 
-import java.util.Date;
+import androidx.annotation.NonNull;
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 
+import java.util.Date;
+//@Entity (tableName = "tarea")
 public class Entrenamiento {
+//    @PrimaryKey(autoGenerate = true)
+//    @NonNull
+    private int id;
+//    @ColumnInfo(name = "fecha")
     private String fecha;
+
     private int horas;
+
     private int minutos;
+
     private int segundos;
+
     private int distancia;
+
     private double minsxkm;
+
     private double velmed;
 
     public Entrenamiento(String fecha, int distancia, int horas, int minutos, int segundos) {
