@@ -8,11 +8,11 @@
     <string name="segsTxt">Segs</string>
     <string name="distanciaTxt">Distancia (m)</string>
     <string name="fechaTxt">Fecha</string>
-    <string name="fechaTextView">Fecha: </string>
-    <string name="distanciaTextView">Distancia: </string>
-    <string name="tiempoTextView">Tiempo: </string>
-    <string name="minsKm">Mins/km: </string>
-    <string name="velMed">Velocidad media: </string>
+    <string name="fechaTextView">Fecha: &#160;</string>
+    <string name="distanciaTextView">Distancia: &#160;</string>
+    <string name="tiempoTextView">Tiempo: &#160;</string>
+    <string name="minsKm">Mins/km: &#160;</string>
+    <string name="velMed">Velocidad media: &#160;</string>
     <string name="alDiag_train">Entrenamiento</string>
     <string name="mostrar">Mostrar</string>
     <string name="modificar">Modificar</string>
@@ -27,5 +27,6 @@
     <string name="maxSegs">59</string>
     <string name="minSegs">00</string>
     <string name="fecha">Fecha</string>
+    <string name="kmH">&#160;km/h</string>
 
 </resources>

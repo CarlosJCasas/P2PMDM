@@ -17,17 +17,16 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.p1pmdm.R;
 import com.example.p1pmdm.core.Entrenamiento;
 import com.example.p1pmdm.core.InputFilterMinMax;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
-
 
 public class MainActivity extends AppCompatActivity {
     private ArrayList<String> itemList;
@@ -71,8 +70,6 @@ public class MainActivity extends AppCompatActivity {
     private void addTraining(){
         final Entrenamiento[] train = new Entrenamiento[1];
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-//        String pattern = "dd-MM-yyyy";
-//        final String fecha =new SimpleDateFormat(pattern).format(new Date());
         final View customLayout = getLayoutInflater().inflate(R.layout.alert_dialog_train,null);
         builder.setView(customLayout);
 
@@ -102,66 +99,91 @@ public class MainActivity extends AppCompatActivity {
         builder.setPositiveButton(R.string.alDiag_posButton, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                int horas=0;
-                if(!horasEd.getText().toString().isEmpty()){
-                    horas = Integer.parseInt(horasEd.getText().toString());
-                }
-                int mins = 0;
-                if(!minsEd.getText().toString().isEmpty()){
-                    mins = Integer.parseInt(minsEd.getText().toString());
-                }
-                int segs = 0;
-                if(!segsEd.getText().toString().isEmpty()){
-                    segs = Integer.parseInt(segsEd.getText().toString());
-                }
+
                 int dist = 0;
-                if(!distEd.getText().toString().isEmpty()){
-                    dist = Integer.parseInt(distEd.getText().toString());
+                int horas = 0;
+                int mins = 0;
+                int segs = 0;
+
+                if (horasEd.getText().toString().isEmpty() && minsEd.getText().toString().isEmpty() && segsEd.getText().toString().isEmpty() && distEd.getText().toString().isEmpty()){
+                    Toast toast = Toast.makeText(MainActivity.this,"No se admiten todos los campos vacíos.", Toast.LENGTH_LONG);
+                    toast.show();
+
+                }else if(horasEd.getText().toString().isEmpty() && minsEd.getText().toString().isEmpty() && segsEd.getText().toString().isEmpty() || distEd.getText().toString().isEmpty()) {
+                    Toast toast = Toast.makeText(MainActivity.this, "Es necesario introducir una distancia o alguna unidad de tiempo.", Toast.LENGTH_LONG);
+                    toast.show();
+                }else {
+
+                    if(!horasEd.getText().toString().isEmpty()){
+                        horas = Integer.parseInt(horasEd.getText().toString());
+                    }
+                    if(!minsEd.getText().toString().isEmpty()){
+                        mins = Integer.parseInt(minsEd.getText().toString());
+                    }
+                    if(!segsEd.getText().toString().isEmpty()){
+                        segs = Integer.parseInt(segsEd.getText().toString());
+                    }
+                    if (!distEd.getText().toString().isEmpty()){
+                        dist = Integer.parseInt(distEd.getText().toString());
+                    }
+                    train[0] = new Entrenamiento(fecha, dist, horas, mins, segs);
+                    String texto = train[0].toString();
+
+                    MainActivity.this.listAdapter.add(texto);
+                    MainActivity.this.listAdapter.notifyDataSetChanged();
+                    MainActivity.this.entrenamientos.add(train[0]);
                 }
-                train[0] = new Entrenamiento(fecha,dist,horas,mins,segs);
-                String texto = train[0].toString();
-                MainActivity.this.listAdapter.add(texto);
-                MainActivity.this.listAdapter.notifyDataSetChanged();
-                MainActivity.this.entrenamientos.add(train[0]);
             }
         });
         builder.setNegativeButton(R.string.alDiag_canButton, null);
-        builder.create().show();
+        final AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     public void mostrar(int position){
+        String formattedVelMedia = "";
+        String formattedMinsKm = "";
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(MainActivity.this);
         View customLayout = getLayoutInflater().inflate(R.layout.mostrar_lay, null);
         dialogBuilder.setView(customLayout);
+
         TextView fechaTextView = customLayout.findViewById(R.id.textViewFecha);
         fechaTextView.setText(getString(R.string.fechaTextView)+MainActivity.this.entrenamientos.get(position).getFecha());
+
         TextView distanciaTextView = customLayout.findViewById(R.id.textViewDistancia);
         distanciaTextView.setText(getString(R.string.distanciaTextView)+String.valueOf(MainActivity.this.entrenamientos.get(position).getDistancia()));
+
         TextView tiempoTextView = customLayout.findViewById(R.id.textViewTiempo);
         tiempoTextView.setText(getString(R.string.tiempoTextView)+MainActivity.this.entrenamientos.get(position).getHoras()+":"+MainActivity.this.entrenamientos
                 .get(position).getMinutos()+":"+MainActivity.this.entrenamientos.get(position).getSegundos());
-        int minutosHora = MainActivity.this.entrenamientos.get(position).getHoras()*60+MainActivity.this.entrenamientos
+
+        int minutosHora = (MainActivity.this.entrenamientos.get(position).getHoras()*60) + MainActivity.this.entrenamientos
                 .get(position).getMinutos();
+
         double minutosKm = 0;
+        double kilometros = (double)MainActivity.this.entrenamientos.get(position).getDistancia()/(double)1000;
         if(MainActivity.this.entrenamientos.get(position).getDistancia()!=0) {
-            minutosKm = (minutosHora * 1000) / MainActivity.this.entrenamientos.get(position).getDistancia();
+            minutosKm = (double)minutosHora / kilometros;
+            formattedMinsKm = String.format("%.2f", minutosKm);
         }
+
         TextView minsxKm = customLayout.findViewById(R.id.textViewMinsKm);
-        minsxKm.setText(getString(R.string.minsKm)+String.valueOf(minutosKm));
+        minsxKm.setText(getString(R.string.minsKm) + formattedMinsKm);
         double velMedia = 0;
-        if(minutosHora!=0) {
-            velMedia = MainActivity.this.entrenamientos.get(position).getDistancia() / minutosHora;
+        double horas = 0;
+        horas = ((double)MainActivity.this.entrenamientos.get(position).getHoras() + ((double)MainActivity.this.entrenamientos.get(position).getMinutos()/(double)60));
+        if(horas!=0) {
+            velMedia = ((double)MainActivity.this.entrenamientos.get(position).getDistancia()/(double)1000) / horas;
+            formattedVelMedia = String.format("%.2f", velMedia);
         }
         TextView velMed = customLayout.findViewById(R.id.textViewVelMedia);
-        velMed.setText(getString(R.string.velMed)+String.valueOf(velMedia));
+        velMed.setText(getString(R.string.velMed) + formattedVelMedia + getString(R.string.kmH));
         dialogBuilder.create().show();
     }
 
     public void modificar(){
         final Entrenamiento[] train = new Entrenamiento[1];
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-//        String pattern = "dd-MM-yyyy";
-//        final String[] fecha = {new SimpleDateFormat(pattern).format(new Date())};
         final View customLayout = getLayoutInflater().inflate(R.layout.alert_dialog_train,null);
         builder.setView(customLayout);
 
@@ -281,7 +303,7 @@ public class MainActivity extends AppCompatActivity {
             final double finalContadorKm = contadorKm/1000;
             final double minutosXkm = contadorMins/finalContadorKm;
             kmTotales.setText(String.valueOf(finalContadorKm));
-            if(contadorMins==0 || finalContadorKm==0){
+            if(contadorMins == 0 || finalContadorKm == 0){
                 minsKm.setText(R.string._00);
             }else {
                 minsKm.setText(String.format("%.2f", minutosXkm));
@@ -360,6 +382,5 @@ public class MainActivity extends AppCompatActivity {
             }
         },year, month,day);
         datePickerDialog.show();
-
     }
 }

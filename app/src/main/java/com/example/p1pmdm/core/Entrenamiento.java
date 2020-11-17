@@ -1,19 +1,17 @@
 package com.example.p1pmdm.core;
 
-import android.widget.EditText;
-
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 import java.util.Date;
-//@Entity (tableName = "tarea")
+@Entity (tableName = "tarea")
 public class Entrenamiento {
-//    @PrimaryKey(autoGenerate = true)
-//    @NonNull
+    @PrimaryKey(autoGenerate = true)
+    @NonNull
     private int id;
-//    @ColumnInfo(name = "fecha")
+    @ColumnInfo(name = "fecha")
     private String fecha;
 
     private int horas;
