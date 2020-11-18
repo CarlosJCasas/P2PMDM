@@ -6,25 +6,21 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 import java.util.Date;
-@Entity (tableName = "tarea")
+@Entity (tableName = "entrenamiento")
 public class Entrenamiento {
     @PrimaryKey(autoGenerate = true)
     @NonNull
     private int id;
     @ColumnInfo(name = "fecha")
     private String fecha;
-
+    @ColumnInfo(name = "hora")
     private int horas;
-
+    @ColumnInfo(name = "minuto")
     private int minutos;
-
+    @ColumnInfo(name = "segundo")
     private int segundos;
-
+    @ColumnInfo(name = "distancia")
     private int distancia;
-
-    private double minsxkm;
-
-    private double velmed;
 
     public Entrenamiento(String fecha, int distancia, int horas, int minutos, int segundos) {
         this.fecha = fecha;
@@ -75,21 +71,6 @@ public class Entrenamiento {
         this.distancia = distancia;
     }
 
-    public double getMinsxkm() {
-        return minsxkm;
-    }
-
-    public void setMinsxkm(double minsxkm) {
-        this.minsxkm = minsxkm;
-    }
-
-    public double getVelmed() {
-        return velmed;
-    }
-
-    public void setVelmed(double velmed) {
-        this.velmed = velmed;
-    }
 
     @Override
     public String toString() {

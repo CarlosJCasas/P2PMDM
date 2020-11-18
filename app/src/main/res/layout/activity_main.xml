@@ -1,101 +1,111 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
     tools:layout_editor_absoluteX="1dp"
-    tools:layout_editor_absoluteY="1dp"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical">
-        <com.google.android.material.appbar.AppBarLayout
-            android:layout_width="match_parent"
+    tools:layout_editor_absoluteY="1dp">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:focusable="true"
+        android:focusableInTouchMode="true">
+
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            >
-        </com.google.android.material.appbar.AppBarLayout>
-        <LinearLayout
+            android:text="@string/nombre"
+            android:textSize="20sp" />
+
+        <EditText
+            android:id="@+id/nombreEd"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
-            android:layout_marginTop="10dp">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/nombre"
-                android:textSize="20sp"/>
-            <EditText
-                android:id="@+id/nombreEd"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                android:inputType="textPersonName"
-                android:maxLines="1"
-                />
-        </LinearLayout>
+            android:inputType="textPersonName"
+            android:maxLines="1" />
+    </LinearLayout>
 
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/edad"
-                android:textSize="20sp"/>
-            <EditText
-              android:id="@+id/edadEd"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:layout_weight="1"
-              android:inputType="number"
-              android:maxLines="1"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/altura"
-                android:textSize="20sp"/>
-            <EditText
-                android:id="@+id/alturaEd"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:inputType="number"
-                android:maxLines="1"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/peso"
-                android:textSize="20sp"/>
-            <EditText
-                android:id="@+id/pesoEd"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:inputType="number"
-                android:maxLines="1"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:orientation="horizontal">
 
-        </LinearLayout>
-        <ListView
-            android:id="@+id/viewList1"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:padding="10dp" />
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/floatingActionButton2"
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:layout_weight="0"
-            android:clickable="true"
-            android:layout_gravity="bottom|end"
-            android:src="@android:drawable/ic_menu_add"
-            android:focusable="true" />
+            android:text="@string/edad"
+            android:textSize="20sp" />
+
+        <EditText
+            android:id="@+id/edadEd"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:inputType="number"
+            android:maxLines="1" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/altura"
+            android:textSize="20sp" />
+
+        <EditText
+            android:id="@+id/alturaEd"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:inputType="number"
+            android:maxLines="1" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/peso"
+            android:textSize="20sp" />
+
+        <EditText
+            android:id="@+id/pesoEd"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:inputType="number"
+            android:maxLines="1" />
+
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/viewList1"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:padding="10dp" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floatingActionButton2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="10dp"
+        android:layout_weight="0"
+        android:clickable="true"
+        android:focusable="true"
+        android:src="@android:drawable/ic_menu_add" />
 
 </LinearLayout>

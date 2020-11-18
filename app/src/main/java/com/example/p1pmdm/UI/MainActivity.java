@@ -33,7 +33,6 @@ import java.util.Calendar;
 public class MainActivity extends AppCompatActivity {
     private ArrayList<String> itemList;
     private ArrayAdapter<String> listAdapter;
-    private ArrayAdapter<String> adaptadorBorrar;
     private ArrayList<Entrenamiento> entrenamientos;
     private int posicion;
     private EditText fechaEd;
@@ -49,7 +48,6 @@ public class MainActivity extends AppCompatActivity {
         FloatingActionButton floatButton = this.findViewById(R.id.floatingActionButton2);
         listView.setLongClickable(true);
         listAdapter = new ArrayAdapter<>(this.getApplicationContext(),android.R.layout.simple_list_item_1,this.itemList);
-        adaptadorBorrar = new ArrayAdapter<>(this.getApplicationContext(), android.R.layout.simple_list_item_multiple_choice,this.itemList);
         listView.setAdapter(this.listAdapter);
         registerForContextMenu(listView);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
