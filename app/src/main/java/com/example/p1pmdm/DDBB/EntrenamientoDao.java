@@ -1,7 +1,10 @@
 package com.example.p1pmdm.DDBB;
 
 import androidx.room.Dao;
+import androidx.room.Delete;
+import androidx.room.Insert;
 import androidx.room.Query;
+import androidx.room.Update;
 
 import com.example.p1pmdm.core.Entrenamiento;
 
@@ -11,4 +14,16 @@ import java.util.List;
 interface EntrenamientoDao {
     @Query("SELECT * FROM entrenamiento")
     List<Entrenamiento> getEntrenamientos();
+
+    @Query("SELECT * FROM entrenamiento WHERE mID LIKE :uuid")
+    Entrenamiento getEntrenamiento(String uuid);
+
+    @Insert
+    void addTrain(Entrenamiento train);
+
+    @Delete
+    void delTrain(Entrenamiento train);
+
+    @Update
+    void updateTrain(Entrenamiento train);
 }

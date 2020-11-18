@@ -138,12 +138,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
-                int dist = 0;
-                int horas = 0;
-                int mins = 0;
-                int segs = 0;
+            int dist = 0;
+            int horas = 0;
+            int mins = 0;
+            int segs = 0;
 
-                if (horasEd.getText().toString().isEmpty() && minsEd.getText().toString().isEmpty() && segsEd.getText().toString().isEmpty() && distEd.getText().toString().isEmpty()){
+            if (horasEd.getText().toString().isEmpty() && minsEd.getText().toString().isEmpty() && segsEd.getText().toString().isEmpty() && distEd.getText().toString().isEmpty()){
                     Toast toast = Toast.makeText(MainActivity.this,"No se admiten todos los campos vacíos.", Toast.LENGTH_LONG);
                     toast.show();
 
@@ -285,8 +285,10 @@ public class MainActivity extends AppCompatActivity {
                 MainActivity.this.entrenamientos.add(posicion,train[0]);
             }
         });
+
         builder.setNegativeButton(R.string.alDiag_canButton,null);
         builder.create().show();
+
     }
 
     @Override

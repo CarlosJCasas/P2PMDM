@@ -6,11 +6,13 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 import java.util.Date;
+import java.util.UUID;
+
 @Entity (tableName = "entrenamiento")
 public class Entrenamiento {
     @PrimaryKey(autoGenerate = true)
     @NonNull
-    private int id;
+    private String mID;
     @ColumnInfo(name = "fecha")
     private String fecha;
     @ColumnInfo(name = "hora")
@@ -28,8 +30,18 @@ public class Entrenamiento {
         this.minutos = minutos;
         this.segundos = segundos;
         this.distancia = distancia;
+
+        mID = UUID.randomUUID().toString();
     }
 
+    @NonNull
+    public String getmID() {
+        return mID;
+    }
+
+    public void setmID(@NonNull String mID) {
+        this.mID = mID;
+    }
 
     public String getFecha() {
         return fecha;
