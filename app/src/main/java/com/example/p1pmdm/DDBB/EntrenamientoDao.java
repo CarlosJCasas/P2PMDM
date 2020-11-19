@@ -15,7 +15,7 @@ interface EntrenamientoDao {
     @Query("SELECT * FROM entrenamiento")
     List<Entrenamiento> getEntrenamientos();
 
-    @Query("SELECT * FROM entrenamiento WHERE mID LIKE :uuid")
+    @Query("SELECT * FROM entrenamiento WHERE idTrain LIKE :uuid")
     Entrenamiento getEntrenamiento(String uuid);
 
     @Insert

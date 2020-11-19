@@ -23,6 +23,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.p1pmdm.DDBB.EntrenamientoLab;
 import com.example.p1pmdm.R;
 import com.example.p1pmdm.core.Entrenamiento;
 import com.example.p1pmdm.core.InputFilterMinMax;
@@ -37,13 +39,19 @@ public class MainActivity extends AppCompatActivity {
     private int posicion;
     private EditText fechaEd;
     private String fecha;
+    private EntrenamientoLab mTrainLab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mTrainLab = EntrenamientoLab.get(this);
+
         this.entrenamientos = new ArrayList<>();
+//        entrenamientos = mTrainLab.getEntrenamientos();
         this.itemList = new ArrayList<>();
+
         ListView listView = this.findViewById(R.id.viewList1);
         FloatingActionButton floatButton = this.findViewById(R.id.floatingActionButton2);
         listView.setLongClickable(true);
@@ -110,7 +118,6 @@ public class MainActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         final View customLayout = getLayoutInflater().inflate(R.layout.alert_dialog_train,null);
         builder.setView(customLayout);
-
         TextView title = new TextView(this);
         title.setText(R.string.alDiag_train);
         title.setTextSize(25);
@@ -138,41 +145,47 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
-            int dist = 0;
-            int horas = 0;
-            int mins = 0;
-            int segs = 0;
+        int dist = 0;
+        int horas = 0;
+        int mins = 0;
+        int segs = 0;
 
-            if (horasEd.getText().toString().isEmpty() && minsEd.getText().toString().isEmpty() && segsEd.getText().toString().isEmpty() && distEd.getText().toString().isEmpty()){
-                    Toast toast = Toast.makeText(MainActivity.this,"No se admiten todos los campos vacíos.", Toast.LENGTH_LONG);
-                    toast.show();
+        if (horasEd.getText().toString().isEmpty() && minsEd.getText().toString().isEmpty() && segsEd.getText().toString().isEmpty() && distEd.getText().toString().isEmpty()){
+                Toast toast = Toast.makeText(MainActivity.this,"No se admiten todos los campos vacíos.", Toast.LENGTH_LONG);
+                toast.show();
 
-                }else if(horasEd.getText().toString().isEmpty() && minsEd.getText().toString().isEmpty() && segsEd.getText().toString().isEmpty() || distEd.getText().toString().isEmpty()) {
-                    Toast toast = Toast.makeText(MainActivity.this, "Es necesario introducir una distancia o alguna unidad de tiempo.", Toast.LENGTH_LONG);
-                    toast.show();
-                }else {
+            }else if(horasEd.getText().toString().isEmpty() && minsEd.getText().toString().isEmpty() && segsEd.getText().toString().isEmpty() || distEd.getText().toString().isEmpty()) {
+                Toast toast = Toast.makeText(MainActivity.this, "Es necesario introducir una distancia o alguna unidad de tiempo.", Toast.LENGTH_LONG);
+                toast.show();
+            }else {
 
-                    if(!horasEd.getText().toString().isEmpty()){
-                        horas = Integer.parseInt(horasEd.getText().toString());
-                    }
-                    if(!minsEd.getText().toString().isEmpty()){
-                        mins = Integer.parseInt(minsEd.getText().toString());
-                    }
-                    if(!segsEd.getText().toString().isEmpty()){
-                        segs = Integer.parseInt(segsEd.getText().toString());
-                    }
-                    if (!distEd.getText().toString().isEmpty()){
-                        dist = Integer.parseInt(distEd.getText().toString());
-                    }
-                    train[0] = new Entrenamiento(fecha, dist, horas, mins, segs);
-                    String texto = train[0].toString();
-
-                    MainActivity.this.listAdapter.add(texto);
-                    MainActivity.this.listAdapter.notifyDataSetChanged();
-                    MainActivity.this.entrenamientos.add(train[0]);
+                if(!horasEd.getText().toString().isEmpty()){
+                    horas = Integer.parseInt(horasEd.getText().toString());
                 }
+                if(!minsEd.getText().toString().isEmpty()){
+                    mins = Integer.parseInt(minsEd.getText().toString());
+                }
+                if(!segsEd.getText().toString().isEmpty()){
+                    segs = Integer.parseInt(segsEd.getText().toString());
+                }
+                if(!distEd.getText().toString().isEmpty()){
+                    dist = Integer.parseInt(distEd.getText().toString());
+                }
+
+                train[0] = new Entrenamiento(fecha, dist, horas, mins, segs);
+                String texto = train[0].toString();
+
+                //Añadir a la base de datos
+                mTrainLab.addTrain(train[0]);
+
+                MainActivity.this.listAdapter.add(texto);
+                MainActivity.this.listAdapter.notifyDataSetChanged();
+                MainActivity.this.entrenamientos.add(train[0]);
+            }
+
             }
         });
+
         builder.setNegativeButton(R.string.alDiag_canButton, null);
         final AlertDialog dialog = builder.create();
         dialog.show();
@@ -256,6 +269,7 @@ public class MainActivity extends AppCompatActivity {
         builder.setPositiveButton(R.string.alDiag_posButton, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+
                 int horas = entrenamientos.get(posicion).getHoras();
                 if(!horasEd.getText().toString().isEmpty()){
                     horas = Integer.parseInt(horasEd.getText().toString());
@@ -276,8 +290,14 @@ public class MainActivity extends AppCompatActivity {
                 if(!fechaEd.getText().toString().isEmpty()){
                     fechaAntigua = fechaEd.getText().toString();
                 }
+
                 train[0] = new Entrenamiento(fechaAntigua,dist,horas,mins,segs);
                 String texto = train[0].toString();
+
+                //Modificar en la base de datos
+//                mTrainLab.updateTrain(train[0]);
+
+
                 MainActivity.this.listAdapter.remove(itemList.get(posicion));
                 MainActivity.this.listAdapter.add(texto);
                 MainActivity.this.listAdapter.notifyDataSetChanged();
@@ -312,6 +332,10 @@ public class MainActivity extends AppCompatActivity {
             AdapterView.AdapterContextMenuInfo info =(AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
             posicion = (int) info.id;
             itemList.remove(posicion);
+            
+            //Borrar elemento de la base de datos
+//            mTrainLab.delTrain(entrenamientos.get(posicion));
+
             entrenamientos.remove(posicion);
             this.listAdapter.notifyDataSetChanged();
         }else{
@@ -387,6 +411,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             });
+
             builder.setPositiveButton(R.string.alDiag_posButton, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
@@ -397,8 +422,12 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             });
+
+            
+
             builder.setNegativeButton(R.string.alDiag_canButton,null);
             builder.create().show();
+
             return true;
         }else{
             return false;

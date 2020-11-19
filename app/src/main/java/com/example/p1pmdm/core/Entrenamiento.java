@@ -10,9 +10,9 @@ import java.util.UUID;
 
 @Entity (tableName = "entrenamiento")
 public class Entrenamiento {
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey
     @NonNull
-    private String mID;
+    private String idTrain;
     @ColumnInfo(name = "fecha")
     private String fecha;
     @ColumnInfo(name = "hora")
@@ -31,16 +31,16 @@ public class Entrenamiento {
         this.segundos = segundos;
         this.distancia = distancia;
 
-        mID = UUID.randomUUID().toString();
+        idTrain = UUID.randomUUID().toString();
     }
 
     @NonNull
-    public String getmID() {
-        return mID;
+    public String getIdTrain() {
+        return idTrain;
     }
 
-    public void setmID(@NonNull String mID) {
-        this.mID = mID;
+    public void setIdTrain(@NonNull String idTrain) {
+        this.idTrain = idTrain;
     }
 
     public String getFecha() {
