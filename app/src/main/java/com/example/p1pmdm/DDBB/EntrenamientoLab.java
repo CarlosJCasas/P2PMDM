@@ -6,6 +6,7 @@ import androidx.room.Room;
 
 import com.example.p1pmdm.core.Entrenamiento;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class EntrenamientoLab implements EntrenamientoDao{
@@ -37,6 +38,11 @@ public class EntrenamientoLab implements EntrenamientoDao{
     @Override
     public Entrenamiento getEntrenamiento(String uuid) {
         return mTrainDao.getEntrenamiento(uuid);
+    }
+
+    @Override
+    public void deleteAll() {
+        mTrainDao.deleteAll();
     }
 
     @Override

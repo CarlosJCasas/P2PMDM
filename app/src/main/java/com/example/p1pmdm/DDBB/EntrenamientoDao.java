@@ -18,6 +18,9 @@ interface EntrenamientoDao {
     @Query("SELECT * FROM entrenamiento WHERE idTrain LIKE :uuid")
     Entrenamiento getEntrenamiento(String uuid);
 
+    @Query("DELETE  FROM entrenamiento")
+    void deleteAll();
+
     @Insert
     void addTrain(Entrenamiento train);
 

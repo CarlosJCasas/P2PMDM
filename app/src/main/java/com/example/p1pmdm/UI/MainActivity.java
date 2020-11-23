@@ -31,11 +31,12 @@ import com.example.p1pmdm.core.InputFilterMinMax;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private ArrayList<String> itemList;
     private ArrayAdapter<String> listAdapter;
-    private ArrayList<Entrenamiento> entrenamientos;
+    private List<Entrenamiento> entrenamientos;
     private int posicion;
     private EditText fechaEd;
     private String fecha;
@@ -47,9 +48,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mTrainLab = EntrenamientoLab.get(this);
+//        mTrainLab.deleteAll();
+        this.entrenamientos = mTrainLab.getEntrenamientos();
 
-        this.entrenamientos = new ArrayList<>();
-//        entrenamientos = mTrainLab.getEntrenamientos();
         this.itemList = new ArrayList<>();
 
         ListView listView = this.findViewById(R.id.viewList1);
@@ -57,6 +58,16 @@ public class MainActivity extends AppCompatActivity {
         listView.setLongClickable(true);
         listAdapter = new ArrayAdapter<>(this.getApplicationContext(),android.R.layout.simple_list_item_1,this.itemList);
         listView.setAdapter(this.listAdapter);
+        
+        //Hay que recorrer todos los entrenamientos y meter su toString en itemList que es la que añade a la vista
+        if(!entrenamientos.isEmpty()){
+            for (Entrenamiento entreno : entrenamientos){
+                String texto = entreno.toString();
+                MainActivity.this.listAdapter.add(texto);
+                MainActivity.this.listAdapter.notifyDataSetChanged();
+            }
+        }
+
         registerForContextMenu(listView);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -86,10 +97,10 @@ public class MainActivity extends AppCompatActivity {
 
         Context context = getApplicationContext();
         SharedPreferences sharedPreferences = context.getSharedPreferences(getString(R.string.misPreferencias),Context.MODE_PRIVATE);
-        nombre.setText(sharedPreferences.getString(getString(R.string.nombre), getString(R.string.nombre)));
-        edad.setText(sharedPreferences.getString(getString(R.string.edad), getString(R.string.edad)));
-        altura.setText(sharedPreferences.getString(getString(R.string.altura), getString(R.string.altura)));
-        peso.setText(sharedPreferences.getString(getString(R.string.peso), getString(R.string.peso)));
+        nombre.setText(sharedPreferences.getString(getString(R.string.nombre), ""));
+        edad.setText(sharedPreferences.getString(getString(R.string.edad), ""));
+        altura.setText(sharedPreferences.getString(getString(R.string.altura), ""));
+        peso.setText(sharedPreferences.getString(getString(R.string.peso), ""));
 
     }
 
@@ -114,6 +125,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void addTraining(){
+
         final Entrenamiento[] train = new Entrenamiento[1];
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         final View customLayout = getLayoutInflater().inflate(R.layout.alert_dialog_train,null);
@@ -295,7 +307,7 @@ public class MainActivity extends AppCompatActivity {
                 String texto = train[0].toString();
 
                 //Modificar en la base de datos
-//                mTrainLab.updateTrain(train[0]);
+                mTrainLab.updateTrain(train[0]);
 
 
                 MainActivity.this.listAdapter.remove(itemList.get(posicion));
@@ -334,7 +346,7 @@ public class MainActivity extends AppCompatActivity {
             itemList.remove(posicion);
             
             //Borrar elemento de la base de datos
-//            mTrainLab.delTrain(entrenamientos.get(posicion));
+            mTrainLab.delTrain(entrenamientos.get(posicion));
 
             entrenamientos.remove(posicion);
             this.listAdapter.notifyDataSetChanged();
