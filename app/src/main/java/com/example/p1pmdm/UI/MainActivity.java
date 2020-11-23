@@ -48,7 +48,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mTrainLab = EntrenamientoLab.get(this);
+
+        //Borrar toda la base de datos
 //        mTrainLab.deleteAll();
+
         this.entrenamientos = mTrainLab.getEntrenamientos();
 
         this.itemList = new ArrayList<>();
@@ -122,6 +125,8 @@ public class MainActivity extends AppCompatActivity {
         editor.putString(getString(R.string.peso), peso.getText().toString());
 
         editor.apply();
+
+
     }
 
     public void addTraining(){
