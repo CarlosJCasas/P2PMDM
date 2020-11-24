@@ -16,7 +16,7 @@ public class EntrenamientoLab implements EntrenamientoDao{
 
     private EntrenamientoLab(Context context){
         Context appContext = context.getApplicationContext();
-        EntrenamientoDB database = Room.databaseBuilder(appContext,EntrenamientoDB.class,
+        EntrenamientoBD database = Room.databaseBuilder(appContext,EntrenamientoBD.class,
                 "entrenamiento").allowMainThreadQueries().build();
 
         mTrainDao = database.getEntrenamientoDao();

@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.InputFilter;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Gravity;
 import android.view.Menu;
@@ -29,6 +30,11 @@ import com.example.p1pmdm.R;
 import com.example.p1pmdm.core.Entrenamiento;
 import com.example.p1pmdm.core.InputFilterMinMax;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -46,6 +52,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        //Crea el archivo para guardar las estadisticas
+        File estadisticas = new File(MainActivity.this.getFilesDir(),"EstadisticasGenerales.txt");
+
 
         mTrainLab = EntrenamientoLab.get(this);
 
@@ -110,6 +119,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        int metrosTotales = 0;
+        double minsKmTotales = 0;
+        double kmTotales;
+        double mediaMinsKm;
+        double minutosKmEach;
         EditText nombre, edad, altura, peso;
         nombre = findViewById(R.id.nombreEd);
         edad = findViewById(R.id.edadEd);
@@ -125,7 +139,27 @@ public class MainActivity extends AppCompatActivity {
         editor.putString(getString(R.string.peso), peso.getText().toString());
 
         editor.apply();
+        FileOutputStream outputStream;
+        try {
+            outputStream = openFileOutput("EstadisticasGenerales.txt", Context.MODE_PRIVATE);
+            for(Entrenamiento ent : entrenamientos){
+                metrosTotales = metrosTotales + ent.getDistancia();
+                //Calcular los mins por km de cada entrenamiento
+                minutosKmEach = (1000*((ent.getHoras()*60)+ent.getMinutos()))/ent.getDistancia();
+                minsKmTotales = minsKmTotales + minutosKmEach;
+            }
+            kmTotales = (double)metrosTotales/1000;
+            mediaMinsKm = minsKmTotales/entrenamientos.size();
 
+            String estadisticas = "Estadisticas Generales\n\n" + "Kilometros totales recorridos: " + String.format("%.2f", kmTotales) + "\n\nMedia de minutos por kilometro recorrido: " + String.format("%.2f", mediaMinsKm);
+            outputStream.write(estadisticas.getBytes());
+            outputStream.close();
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -166,6 +200,7 @@ public class MainActivity extends AppCompatActivity {
         int horas = 0;
         int mins = 0;
         int segs = 0;
+        double minsKm;
 
         if (horasEd.getText().toString().isEmpty() && minsEd.getText().toString().isEmpty() && segsEd.getText().toString().isEmpty() && distEd.getText().toString().isEmpty()){
                 Toast toast = Toast.makeText(MainActivity.this,"No se admiten todos los campos vacíos.", Toast.LENGTH_LONG);
@@ -188,8 +223,9 @@ public class MainActivity extends AppCompatActivity {
                 if(!distEd.getText().toString().isEmpty()){
                     dist = Integer.parseInt(distEd.getText().toString());
                 }
+                minsKm = (double)(((horas*60 + mins)*1000)/dist);
 
-                train[0] = new Entrenamiento(fecha, dist, horas, mins, segs);
+                train[0] = new Entrenamiento(fecha, dist, horas, mins, segs, minsKm);
                 String texto = train[0].toString();
 
                 //Añadir a la base de datos
@@ -307,13 +343,13 @@ public class MainActivity extends AppCompatActivity {
                 if(!fechaEd.getText().toString().isEmpty()){
                     fechaAntigua = fechaEd.getText().toString();
                 }
+                double minsKm = entrenamientos.get(posicion).getMinsKm();
 
-                train[0] = new Entrenamiento(fechaAntigua,dist,horas,mins,segs);
+                train[0] = new Entrenamiento(fechaAntigua,dist,horas,mins,segs, minsKm);
                 String texto = train[0].toString();
 
                 //Modificar en la base de datos
                 mTrainLab.updateTrain(train[0]);
-
 
                 MainActivity.this.listAdapter.remove(itemList.get(posicion));
                 MainActivity.this.listAdapter.add(texto);

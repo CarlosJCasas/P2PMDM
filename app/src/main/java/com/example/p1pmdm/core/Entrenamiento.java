@@ -23,13 +23,16 @@ public class Entrenamiento {
     private int segundos;
     @ColumnInfo(name = "distancia")
     private int distancia;
+    @ColumnInfo(name = "minsKm")
+    private double minsKm;
 
-    public Entrenamiento(String fecha, int distancia, int horas, int minutos, int segundos) {
+    public Entrenamiento(String fecha, int distancia, int horas, int minutos, int segundos, double minsKm) {
         this.fecha = fecha;
         this.horas = horas;
         this.minutos = minutos;
         this.segundos = segundos;
         this.distancia = distancia;
+        this.minsKm = minsKm;
 
         idTrain = UUID.randomUUID().toString();
     }
@@ -83,6 +86,13 @@ public class Entrenamiento {
         this.distancia = distancia;
     }
 
+    public double getMinsKm() {
+        return minsKm;
+    }
+
+    public void setMinsKm(double minsKm) {
+        this.minsKm = minsKm;
+    }
 
     @Override
     public String toString() {
