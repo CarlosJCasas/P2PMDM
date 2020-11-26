@@ -117,28 +117,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
+    protected void onStop() {
+        super.onStop();
         int metrosTotales = 0;
         double minsKmTotales = 0;
         double kmTotales;
         double mediaMinsKm;
         double minutosKmEach;
-        EditText nombre, edad, altura, peso;
-        nombre = findViewById(R.id.nombreEd);
-        edad = findViewById(R.id.edadEd);
-        altura = findViewById(R.id.alturaEd);
-        peso = findViewById(R.id.pesoEd);
 
-        Context context = getApplicationContext();
-        SharedPreferences sharedPreferences = context.getSharedPreferences(getString(R.string.misPreferencias),Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(getString(R.string.nombre), nombre.getText().toString());
-        editor.putString(getString(R.string.edad), edad.getText().toString());
-        editor.putString(getString(R.string.altura), altura.getText().toString());
-        editor.putString(getString(R.string.peso), peso.getText().toString());
-
-        editor.apply();
         FileOutputStream outputStream;
         try {
             outputStream = openFileOutput("EstadisticasGenerales.txt", Context.MODE_PRIVATE);
@@ -160,7 +146,27 @@ public class MainActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        EditText nombre, edad, altura, peso;
+        nombre = findViewById(R.id.nombreEd);
+        edad = findViewById(R.id.edadEd);
+        altura = findViewById(R.id.alturaEd);
+        peso = findViewById(R.id.pesoEd);
+
+        Context context = getApplicationContext();
+        SharedPreferences sharedPreferences = context.getSharedPreferences(getString(R.string.misPreferencias),Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(getString(R.string.nombre), nombre.getText().toString());
+        editor.putString(getString(R.string.edad), edad.getText().toString());
+        editor.putString(getString(R.string.altura), altura.getText().toString());
+        editor.putString(getString(R.string.peso), peso.getText().toString());
+
+        editor.apply();
     }
 
     public void addTraining(){
@@ -205,36 +211,48 @@ public class MainActivity extends AppCompatActivity {
         if (horasEd.getText().toString().isEmpty() && minsEd.getText().toString().isEmpty() && segsEd.getText().toString().isEmpty() && distEd.getText().toString().isEmpty()){
                 Toast toast = Toast.makeText(MainActivity.this,"No se admiten todos los campos vacíos.", Toast.LENGTH_LONG);
                 toast.show();
+                addTraining();
 
-            }else if(horasEd.getText().toString().isEmpty() && minsEd.getText().toString().isEmpty() && segsEd.getText().toString().isEmpty() || distEd.getText().toString().isEmpty()) {
-                Toast toast = Toast.makeText(MainActivity.this, "Es necesario introducir una distancia o alguna unidad de tiempo.", Toast.LENGTH_LONG);
-                toast.show();
-            }else {
+        }else if(horasEd.getText().toString().isEmpty() && minsEd.getText().toString().isEmpty() && segsEd.getText().toString().isEmpty() || distEd.getText().toString().isEmpty()) {
+            Toast toast = Toast.makeText(MainActivity.this, "Es necesario introducir una distancia o alguna unidad de tiempo.", Toast.LENGTH_LONG);
+            toast.show();
+            addTraining();
+        }else {
 
-                if(!horasEd.getText().toString().isEmpty()){
-                    horas = Integer.parseInt(horasEd.getText().toString());
-                }
-                if(!minsEd.getText().toString().isEmpty()){
-                    mins = Integer.parseInt(minsEd.getText().toString());
-                }
-                if(!segsEd.getText().toString().isEmpty()){
-                    segs = Integer.parseInt(segsEd.getText().toString());
-                }
-                if(!distEd.getText().toString().isEmpty()){
-                    dist = Integer.parseInt(distEd.getText().toString());
-                }
-                minsKm = (double)(((horas*60 + mins)*1000)/dist);
-
-                train[0] = new Entrenamiento(fecha, dist, horas, mins, segs, minsKm);
-                String texto = train[0].toString();
-
-                //Añadir a la base de datos
-                mTrainLab.addTrain(train[0]);
-
-                MainActivity.this.listAdapter.add(texto);
-                MainActivity.this.listAdapter.notifyDataSetChanged();
-                MainActivity.this.entrenamientos.add(train[0]);
+            if(!horasEd.getText().toString().isEmpty()){
+                horas = Integer.parseInt(horasEd.getText().toString());
+                String.format("%02d", horas); //Deberia poner los numeros con dos cifras rellenando con 0s
             }
+            if(!minsEd.getText().toString().isEmpty()){
+                mins = Integer.parseInt(minsEd.getText().toString());
+            }
+            if(!segsEd.getText().toString().isEmpty()){
+                segs = Integer.parseInt(segsEd.getText().toString());
+            }
+            if(!distEd.getText().toString().isEmpty()){
+                dist = Integer.parseInt(distEd.getText().toString());
+            }
+            if(fechaEd.getText().toString().isEmpty()){
+                int day, month, year;
+                Calendar calendario  = Calendar.getInstance();
+                day = calendario.get(Calendar.DAY_OF_MONTH);
+                month = calendario.get(Calendar.MONTH);
+                year = calendario.get(Calendar.YEAR);
+                String selectedDate = day+"/"+month+"/"+year;
+                fecha = selectedDate;
+            }
+            minsKm = (double)(((horas*60 + mins)*1000)/dist);
+
+            train[0] = new Entrenamiento(fecha, dist, horas, mins, segs, minsKm);
+            String texto = train[0].toString();
+
+            //Añadir a la base de datos
+            mTrainLab.addTrain(train[0]);
+
+            MainActivity.this.listAdapter.add(texto);
+            MainActivity.this.listAdapter.notifyDataSetChanged();
+            MainActivity.this.entrenamientos.add(train[0]);
+        }
 
             }
         });
@@ -323,39 +341,39 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
-                int horas = entrenamientos.get(posicion).getHoras();
-                if(!horasEd.getText().toString().isEmpty()){
-                    horas = Integer.parseInt(horasEd.getText().toString());
-                }
-                int mins = entrenamientos.get(posicion).getMinutos();
-                if(!minsEd.getText().toString().isEmpty()) {
-                    mins = Integer.parseInt(minsEd.getText().toString());
-                }
-                int segs = entrenamientos.get(posicion).getSegundos();
-                if(!segsEd.getText().toString().isEmpty()) {
-                    segs = Integer.parseInt(segsEd.getText().toString());
-                }
-                int dist = entrenamientos.get(posicion).getDistancia();
-                if(!distEd.getText().toString().isEmpty()) {
-                    dist = Integer.parseInt(distEd.getText().toString());
-                }
-                String fechaAntigua = entrenamientos.get(posicion).getFecha();
-                if(!fechaEd.getText().toString().isEmpty()){
-                    fechaAntigua = fechaEd.getText().toString();
-                }
-                double minsKm = entrenamientos.get(posicion).getMinsKm();
+            int horas = entrenamientos.get(posicion).getHoras();
+            if(!horasEd.getText().toString().isEmpty()){
+                horas = Integer.parseInt(horasEd.getText().toString());
+            }
+            int mins = entrenamientos.get(posicion).getMinutos();
+            if(!minsEd.getText().toString().isEmpty()) {
+                mins = Integer.parseInt(minsEd.getText().toString());
+            }
+            int segs = entrenamientos.get(posicion).getSegundos();
+            if(!segsEd.getText().toString().isEmpty()) {
+                segs = Integer.parseInt(segsEd.getText().toString());
+            }
+            int dist = entrenamientos.get(posicion).getDistancia();
+            if(!distEd.getText().toString().isEmpty()) {
+                dist = Integer.parseInt(distEd.getText().toString());
+            }
+            String fechaAntigua = entrenamientos.get(posicion).getFecha();
+            if(!fechaEd.getText().toString().isEmpty()){
+                fechaAntigua = fechaEd.getText().toString();
+            }
+            double minsKm = entrenamientos.get(posicion).getMinsKm();
 
-                train[0] = new Entrenamiento(fechaAntigua,dist,horas,mins,segs, minsKm);
-                String texto = train[0].toString();
+            train[0] = new Entrenamiento(fechaAntigua,dist,horas,mins,segs, minsKm);
+            String texto = train[0].toString();
 
-                //Modificar en la base de datos
-                mTrainLab.updateTrain(train[0]);
+            //Modificar en la base de datos
+            mTrainLab.updateTrain(train[0]);
 
-                MainActivity.this.listAdapter.remove(itemList.get(posicion));
-                MainActivity.this.listAdapter.add(texto);
-                MainActivity.this.listAdapter.notifyDataSetChanged();
-                MainActivity.this.entrenamientos.remove(posicion);
-                MainActivity.this.entrenamientos.add(posicion,train[0]);
+            MainActivity.this.listAdapter.remove(itemList.get(posicion));
+            MainActivity.this.listAdapter.add(texto);
+            MainActivity.this.listAdapter.notifyDataSetChanged();
+            MainActivity.this.entrenamientos.remove(posicion);
+            MainActivity.this.entrenamientos.add(posicion,train[0]);
             }
         });
 
@@ -452,6 +470,7 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }else if (id == R.id.clear){
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
             final ArrayList<Integer> itemsSelected = new ArrayList<>();
             CharSequence[] cs = itemList.toArray(new CharSequence[itemList.size()]);
             builder.setMultiChoiceItems(cs, null, new DialogInterface.OnMultiChoiceClickListener() {
