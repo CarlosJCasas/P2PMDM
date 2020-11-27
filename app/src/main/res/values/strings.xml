@@ -34,5 +34,7 @@
     <string name="altura">Altura (cm)</string>
     <string name="peso">Peso (kg)</string>
     <string name="misPreferencias">MisPreferencias</string>
+    <string name="training">Entrenamiento </string>
+    <string name="eliminar">Eliminar</string>
 
 </resources>

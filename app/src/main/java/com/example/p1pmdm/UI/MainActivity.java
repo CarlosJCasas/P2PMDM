@@ -74,8 +74,14 @@ public class MainActivity extends AppCompatActivity {
         //Hay que recorrer todos los entrenamientos y meter su toString en itemList que es la que añade a la vista
         if(!entrenamientos.isEmpty()){
             for (Entrenamiento entreno : entrenamientos){
-                String texto = entreno.toString();
-                MainActivity.this.listAdapter.add(texto);
+                String horasFormateadas, minutosFormateados, segundosFormateados;
+                horasFormateadas = String.format("%02d", entreno.getHoras());
+                minutosFormateados = String.format("%02d", entreno.getMinutos());
+                segundosFormateados = String.format("%02d", entreno.getSegundos());
+                String textoVisible = entreno.getFecha() +
+                        " Distancia: " + entreno.getDistancia()+"m" +
+                        " Tiempo: " + horasFormateadas + ":" + minutosFormateados + ":" + segundosFormateados;
+                MainActivity.this.listAdapter.add(textoVisible);
                 MainActivity.this.listAdapter.notifyDataSetChanged();
             }
         }
@@ -206,6 +212,9 @@ public class MainActivity extends AppCompatActivity {
         int horas = 0;
         int mins = 0;
         int segs = 0;
+        String horasFormateadas = getString(R.string._00);
+        String minsFormateados = getString(R.string._00);
+        String segsFormateados = getString(R.string._00);
         double minsKm;
 
         if (horasEd.getText().toString().isEmpty() && minsEd.getText().toString().isEmpty() && segsEd.getText().toString().isEmpty() && distEd.getText().toString().isEmpty()){
@@ -221,13 +230,15 @@ public class MainActivity extends AppCompatActivity {
 
             if(!horasEd.getText().toString().isEmpty()){
                 horas = Integer.parseInt(horasEd.getText().toString());
-                String.format("%02d", horas); //Deberia poner los numeros con dos cifras rellenando con 0s
+                horasFormateadas = String.format("%02d", horas); //Deberia poner los numeros con dos cifras rellenando con 0s
             }
             if(!minsEd.getText().toString().isEmpty()){
                 mins = Integer.parseInt(minsEd.getText().toString());
+                minsFormateados = String.format("%02d", mins);
             }
             if(!segsEd.getText().toString().isEmpty()){
                 segs = Integer.parseInt(segsEd.getText().toString());
+                segsFormateados = String.format("%02d", segs);
             }
             if(!distEd.getText().toString().isEmpty()){
                 dist = Integer.parseInt(distEd.getText().toString());
@@ -241,15 +252,20 @@ public class MainActivity extends AppCompatActivity {
                 String selectedDate = day+"/"+month+"/"+year;
                 fecha = selectedDate;
             }
+
             minsKm = (double)(((horas*60 + mins)*1000)/dist);
 
             train[0] = new Entrenamiento(fecha, dist, horas, mins, segs, minsKm);
-            String texto = train[0].toString();
+            String textoVisible = fecha +
+                    " Distancia: " + train[0].getDistancia()+"m" +
+                    " Tiempo: " + horasFormateadas + ":" + minsFormateados + ":" + segsFormateados;
+//            String texto = train[0].toString();
 
             //Añadir a la base de datos
             mTrainLab.addTrain(train[0]);
 
-            MainActivity.this.listAdapter.add(texto);
+            //Añade el texto formateado
+            MainActivity.this.listAdapter.add(textoVisible);
             MainActivity.this.listAdapter.notifyDataSetChanged();
             MainActivity.this.entrenamientos.add(train[0]);
         }
@@ -268,6 +284,15 @@ public class MainActivity extends AppCompatActivity {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(MainActivity.this);
         View customLayout = getLayoutInflater().inflate(R.layout.mostrar_lay, null);
         dialogBuilder.setView(customLayout);
+
+        TextView title = new TextView(this);
+        title.setText(R.string.training);
+        title.setTextSize(25);
+        title.setPadding(25,25,25,25);
+        title.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+        title.setTextColor(getResources().getColor(R.color.blanco));
+        title.setGravity(Gravity.CENTER);
+        dialogBuilder.setCustomTitle(title);
 
         TextView fechaTextView = customLayout.findViewById(R.id.textViewFecha);
         fechaTextView.setText(getString(R.string.fechaTextView)+MainActivity.this.entrenamientos.get(position).getFecha());
@@ -337,22 +362,36 @@ public class MainActivity extends AppCompatActivity {
         final EditText segsEd = customLayout.findViewById(R.id.segundosEditText);
         segsEd.setHint(String.valueOf(entrenamientos.get(posicion).getSegundos()));
 
+        final String[] horasFormateadas = new String[1];
+        final String[] minsFormateados = new String[1];
+        final String[] segsFormateados = new String[1];
+
+
         builder.setPositiveButton(R.string.alDiag_posButton, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
             int horas = entrenamientos.get(posicion).getHoras();
+                horasFormateadas[0] = String.format("%02d", horas);
             if(!horasEd.getText().toString().isEmpty()){
                 horas = Integer.parseInt(horasEd.getText().toString());
+                horasFormateadas[0] = String.format("%02d", horas);
             }
+
             int mins = entrenamientos.get(posicion).getMinutos();
+                minsFormateados[0] = String.format("%02d", mins);
             if(!minsEd.getText().toString().isEmpty()) {
                 mins = Integer.parseInt(minsEd.getText().toString());
+                minsFormateados[0] = String.format("%02d", mins);
             }
+
             int segs = entrenamientos.get(posicion).getSegundos();
+                segsFormateados[0] = String.format("%02d", segs);
             if(!segsEd.getText().toString().isEmpty()) {
                 segs = Integer.parseInt(segsEd.getText().toString());
+                segsFormateados[0] = String.format("%02d", segs);
             }
+
             int dist = entrenamientos.get(posicion).getDistancia();
             if(!distEd.getText().toString().isEmpty()) {
                 dist = Integer.parseInt(distEd.getText().toString());
@@ -363,14 +402,19 @@ public class MainActivity extends AppCompatActivity {
             }
             double minsKm = entrenamientos.get(posicion).getMinsKm();
 
-            train[0] = new Entrenamiento(fechaAntigua,dist,horas,mins,segs, minsKm);
+            train[0] = new Entrenamiento(fechaAntigua,dist,horas,mins,segs,minsKm);
             String texto = train[0].toString();
+
+            String textoVisible = fechaAntigua +
+                    " Distancia: " + train[0].getDistancia()+"m" +
+                    " Tiempo: " + horasFormateadas[0] + ":" + minsFormateados[0] + ":" + segsFormateados[0];
+
 
             //Modificar en la base de datos
             mTrainLab.updateTrain(train[0]);
 
             MainActivity.this.listAdapter.remove(itemList.get(posicion));
-            MainActivity.this.listAdapter.add(texto);
+            MainActivity.this.listAdapter.add(textoVisible);
             MainActivity.this.listAdapter.notifyDataSetChanged();
             MainActivity.this.entrenamientos.remove(posicion);
             MainActivity.this.entrenamientos.add(posicion,train[0]);
@@ -428,6 +472,17 @@ public class MainActivity extends AppCompatActivity {
             double contadorKm = 0;
             double contadorMins = 0;
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+            TextView title = new TextView(this);
+            title.setText(R.string.estadisticas);
+            title.setTextSize(25);
+            title.setPadding(25,25,25,25);
+            title.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+            title.setTextColor(getResources().getColor(R.color.blanco));
+            title.setGravity(Gravity.CENTER);
+            builder.setCustomTitle(title);
+
+
             View customLayout = getLayoutInflater().inflate(R.layout.stats,null);
             builder.setView(customLayout);
             final TextView kmTotales = customLayout.findViewById(R.id.resultadoKmTotales);
@@ -451,12 +506,24 @@ public class MainActivity extends AppCompatActivity {
             addTraining();
             return true;
         }else if (id==R.id.mod){
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+
+            TextView title = new TextView(this);
+            title.setText(R.string.modificar);
+            title.setTextSize(25);
+            title.setPadding(25,25,25,25);
+            title.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+            title.setTextColor(getResources().getColor(R.color.blanco));
+            title.setGravity(Gravity.CENTER);
+            builder.setCustomTitle(title);
+
             int checkedItem = -1;
             builder.setSingleChoiceItems(listAdapter, checkedItem, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                         posicion=which;
+
                         }
                     });
             builder.setPositiveButton(R.string.alDiag_posButton, new DialogInterface.OnClickListener() {
@@ -469,7 +536,16 @@ public class MainActivity extends AppCompatActivity {
             builder.create().show();
             return true;
         }else if (id == R.id.clear){
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+            TextView title = new TextView(this);
+            title.setText(R.string.eliminar);
+            title.setTextSize(25);
+            title.setPadding(25,25,25,25);
+            title.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+            title.setTextColor(getResources().getColor(R.color.blanco));
+            title.setGravity(Gravity.CENTER);
+            builder.setCustomTitle(title);
 
             final ArrayList<Integer> itemsSelected = new ArrayList<>();
             CharSequence[] cs = itemList.toArray(new CharSequence[itemList.size()]);
@@ -487,11 +563,22 @@ public class MainActivity extends AppCompatActivity {
             builder.setPositiveButton(R.string.alDiag_posButton, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    for (int i :itemsSelected){
-                        itemList.remove(i);
-                        entrenamientos.remove(i);
-                        listAdapter.notifyDataSetChanged();
-                    }
+                    AlertDialog.Builder aceptarBuilder = new AlertDialog.Builder(MainActivity.this);
+                    aceptarBuilder.setMessage("¿Estas seguro?");
+
+                    aceptarBuilder.setPositiveButton(R.string.alDiag_posButton, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            for (int i :itemsSelected){
+                                itemList.remove(i);
+                                entrenamientos.remove(i);
+                                listAdapter.notifyDataSetChanged();
+                            }
+                        }
+                    });
+                    aceptarBuilder.setNegativeButton(R.string.alDiag_canButton, null);
+
+                    aceptarBuilder.create().show();
                 }
             });
 
