@@ -36,7 +36,9 @@
             android:layout_marginEnd="10dp"
             android:inputType="textPersonName"
             android:maxLines="1"
-            android:maxLength="28"/>
+            android:maxLength="28"
+            android:nextFocusDown="@id/edadEd"
+            android:imeOptions="actionNext"/>
     </LinearLayout>
 
 
@@ -60,7 +62,9 @@
             android:layout_weight="1"
             android:inputType="number"
             android:maxLines="1"
-            android:maxLength="2"/>
+            android:maxLength="2"
+            android:nextFocusRight="@id/alturaEd"
+            android:imeOptions="actionNext"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -75,13 +79,17 @@
             android:layout_weight="1"
             android:inputType="number"
             android:maxLines="1"
-            android:maxLength="3"/>
+            android:maxLength="3"
+            android:nextFocusRight="@id/pesoEd"
+            android:imeOptions="actionNext"/>
 
         <TextView
+            android:id="@+id/pesoTxt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/peso"
-            android:textSize="20sp" />
+            android:textSize="20sp"
+            tools:ignore="InvalidId" />
 
         <EditText
             android:id="@+id/pesoEd"
@@ -90,7 +98,8 @@
             android:layout_weight="1"
             android:inputType="number"
             android:maxLines="1"
-            android:maxLength="3"/>
+            android:maxLength="3"
+           android:imeOptions="actionDone"/>
 
     </LinearLayout>
 

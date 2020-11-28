@@ -37,4 +37,6 @@
     <string name="training">Entrenamiento </string>
     <string name="eliminar">Eliminar</string>
 
+    <string name="metros">&#160;metros</string>
+
 </resources>

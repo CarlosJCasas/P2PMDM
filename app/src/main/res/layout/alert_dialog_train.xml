@@ -27,7 +27,9 @@
             android:layout_marginBottom="15dp"
             android:inputType="date"
             android:focusable="false"
-            android:clickable="true"/>
+            android:clickable="true"
+            android:nextFocusDown="@id/distanciaEditText"
+            android:imeOptions="actionNext"/>
         </LinearLayout>
 
     <TextView
@@ -49,7 +51,9 @@
         android:maxLength="5"
         android:inputType="number"
         android:hint="@string/_00"
-        android:textSize="20sp"/>
+        android:textSize="20sp"
+        android:nextFocusDown="@id/horasEditText"
+        android:imeOptions="actionNext"/>
     <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -100,7 +104,8 @@
             android:layout_weight="1"
             android:hint="@string/_00"
             android:maxLength="2"
-            />
+            android:nextFocusRight="@id/minutosEditText"
+            android:imeOptions="actionNext"/>
 
         <EditText
             android:id="@+id/minutosEditText"
@@ -112,7 +117,8 @@
             android:textSize="20sp"
             android:hint="@string/_00"
             android:maxLength="2"
-            />
+            android:nextFocusRight="@id/segundosEditText"
+            android:imeOptions="actionNext"/>
 
         <EditText
             android:id="@+id/segundosEditText"
@@ -123,6 +129,8 @@
             android:layout_weight="1"
             android:textSize="20sp"
             android:hint="@string/_00"
-            android:maxLength="2"/>
+            android:maxLength="2"
+            android:nextFocusForward="@id/segundosEditText"
+            android:imeOptions="actionDone"/>
     </LinearLayout>
 </LinearLayout>

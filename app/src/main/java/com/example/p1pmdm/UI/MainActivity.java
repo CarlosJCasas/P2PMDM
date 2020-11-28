@@ -303,11 +303,11 @@ public class MainActivity extends AppCompatActivity {
         fechaTextView.setText(getString(R.string.fechaTextView) + MainActivity.this.entrenamientos.get(position).getFecha());
 
         TextView distanciaTextView = customLayout.findViewById(R.id.textViewDistancia);
-        distanciaTextView.setText(getString(R.string.distanciaTextView) + MainActivity.this.entrenamientos.get(position).getDistancia());
+        distanciaTextView.setText(getString(R.string.distanciaTextView) + MainActivity.this.entrenamientos.get(position).getDistancia() + getString(R.string.metros));
 
         TextView tiempoTextView = customLayout.findViewById(R.id.textViewTiempo);
-        tiempoTextView.setText(getString(R.string.tiempoTextView) + MainActivity.this.entrenamientos.get(position).getHoras() + ":" + MainActivity.this.entrenamientos
-                .get(position).getMinutos() + ":" + MainActivity.this.entrenamientos.get(position).getSegundos());
+        tiempoTextView.setText(getString(R.string.tiempoTextView) + String.format("%02d", MainActivity.this.entrenamientos.get(position).getHoras()) + ":" + String.format("%02d", MainActivity.this.entrenamientos
+                .get(position).getMinutos()) + ":" + String.format("%02d", MainActivity.this.entrenamientos.get(position).getSegundos()));
 
         int minutosHora = (MainActivity.this.entrenamientos.get(position).getHoras() * 60) + MainActivity.this.entrenamientos
                 .get(position).getMinutos();
@@ -519,7 +519,7 @@ public class MainActivity extends AppCompatActivity {
             return true;
         } else if (id == R.id.mod) {
             final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
+            ArrayAdapter<String> listAdapterModificar = new ArrayAdapter<>(this.getApplicationContext(), android.R.layout.simple_list_item_single_choice, this.itemList);
 
             TextView title = new TextView(this);
             title.setText(R.string.modificar);
@@ -531,7 +531,7 @@ public class MainActivity extends AppCompatActivity {
             builder.setCustomTitle(title);
 
             int checkedItem = -1;
-            builder.setSingleChoiceItems(listAdapter, checkedItem, new DialogInterface.OnClickListener() {
+            builder.setSingleChoiceItems(listAdapterModificar, checkedItem, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     posicion = which;
