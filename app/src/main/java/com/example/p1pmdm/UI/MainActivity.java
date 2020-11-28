@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         //Crea el archivo para guardar las estadisticas
-        File estadisticas = new File(MainActivity.this.getFilesDir(),"EstadisticasGenerales.txt");
+        File estadisticas = new File(MainActivity.this.getFilesDir(), "EstadisticasGenerales.txt");
 
 
         mTrainLab = EntrenamientoLab.get(this);
@@ -68,18 +68,18 @@ public class MainActivity extends AppCompatActivity {
         ListView listView = this.findViewById(R.id.viewList1);
         FloatingActionButton floatButton = this.findViewById(R.id.floatingActionButton2);
         listView.setLongClickable(true);
-        listAdapter = new ArrayAdapter<>(this.getApplicationContext(),android.R.layout.simple_list_item_1,this.itemList);
+        listAdapter = new ArrayAdapter<>(this.getApplicationContext(), android.R.layout.simple_list_item_1, this.itemList);
         listView.setAdapter(this.listAdapter);
-        
+
         //Hay que recorrer todos los entrenamientos y meter su toString en itemList que es la que añade a la vista
-        if(!entrenamientos.isEmpty()){
-            for (Entrenamiento entreno : entrenamientos){
+        if (!entrenamientos.isEmpty()) {
+            for (Entrenamiento entreno : entrenamientos) {
                 String horasFormateadas, minutosFormateados, segundosFormateados;
                 horasFormateadas = String.format("%02d", entreno.getHoras());
                 minutosFormateados = String.format("%02d", entreno.getMinutos());
                 segundosFormateados = String.format("%02d", entreno.getSegundos());
                 String textoVisible = entreno.getFecha() +
-                        " Distancia: " + entreno.getDistancia()+"m" +
+                        " Distancia: " + entreno.getDistancia() + "m" +
                         " Tiempo: " + horasFormateadas + ":" + minutosFormateados + ":" + segundosFormateados;
                 MainActivity.this.listAdapter.add(textoVisible);
                 MainActivity.this.listAdapter.notifyDataSetChanged();
@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (position >=0){
+                if (position >= 0) {
                     posicion = position;
                     MainActivity.this.mostrar(posicion);
                 }
@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
         floatButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            MainActivity.this.addTraining();
+                MainActivity.this.addTraining();
             }
         });
     }
@@ -114,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
         peso = findViewById(R.id.pesoEd);
 
         Context context = getApplicationContext();
-        SharedPreferences sharedPreferences = context.getSharedPreferences(getString(R.string.misPreferencias),Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = context.getSharedPreferences(getString(R.string.misPreferencias), Context.MODE_PRIVATE);
         nombre.setText(sharedPreferences.getString(getString(R.string.nombre), ""));
         edad.setText(sharedPreferences.getString(getString(R.string.edad), ""));
         altura.setText(sharedPreferences.getString(getString(R.string.altura), ""));
@@ -134,21 +134,19 @@ public class MainActivity extends AppCompatActivity {
         FileOutputStream outputStream;
         try {
             outputStream = openFileOutput("EstadisticasGenerales.txt", Context.MODE_PRIVATE);
-            for(Entrenamiento ent : entrenamientos){
+            for (Entrenamiento ent : entrenamientos) {
                 metrosTotales = metrosTotales + ent.getDistancia();
                 //Calcular los mins por km de cada entrenamiento
-                minutosKmEach = (1000*((ent.getHoras()*60)+ent.getMinutos()))/ent.getDistancia();
+                minutosKmEach = (1000 * ((ent.getHoras() * 60) + ent.getMinutos())) / ent.getDistancia();
                 minsKmTotales = minsKmTotales + minutosKmEach;
             }
-            kmTotales = (double)metrosTotales/1000;
-            mediaMinsKm = minsKmTotales/entrenamientos.size();
+            kmTotales = (double) metrosTotales / 1000;
+            mediaMinsKm = minsKmTotales / entrenamientos.size();
 
             String estadisticas = "Estadisticas Generales\n\n" + "Kilometros totales recorridos: " + String.format("%.2f", kmTotales) + "\n\nMedia de minutos por kilometro recorrido: " + String.format("%.2f", mediaMinsKm);
             outputStream.write(estadisticas.getBytes());
             outputStream.close();
 
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -165,7 +163,7 @@ public class MainActivity extends AppCompatActivity {
         peso = findViewById(R.id.pesoEd);
 
         Context context = getApplicationContext();
-        SharedPreferences sharedPreferences = context.getSharedPreferences(getString(R.string.misPreferencias),Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = context.getSharedPreferences(getString(R.string.misPreferencias), Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(getString(R.string.nombre), nombre.getText().toString());
         editor.putString(getString(R.string.edad), edad.getText().toString());
@@ -175,16 +173,16 @@ public class MainActivity extends AppCompatActivity {
         editor.apply();
     }
 
-    public void addTraining(){
+    public void addTraining() {
 
         final Entrenamiento[] train = new Entrenamiento[1];
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        final View customLayout = getLayoutInflater().inflate(R.layout.alert_dialog_train,null);
+        final View customLayout = getLayoutInflater().inflate(R.layout.alert_dialog_train, null);
         builder.setView(customLayout);
         TextView title = new TextView(this);
         title.setText(R.string.alDiag_train);
         title.setTextSize(25);
-        title.setPadding(25,25,25,25);
+        title.setPadding(25, 25, 25, 25);
         title.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
         title.setTextColor(getResources().getColor(R.color.blanco));
         title.setGravity(Gravity.CENTER);
@@ -201,75 +199,82 @@ public class MainActivity extends AppCompatActivity {
         final EditText distEd = customLayout.findViewById(R.id.distanciaEditText);
         final EditText horasEd = customLayout.findViewById(R.id.horasEditText);
         final EditText minsEd = customLayout.findViewById(R.id.minutosEditText);
-        minsEd.setFilters(new InputFilter[]{new InputFilterMinMax(getString(R.string.minSegs),getString(R.string.maxSegs))});
+        minsEd.setFilters(new InputFilter[]{new InputFilterMinMax(getString(R.string.minSegs), getString(R.string.maxSegs))});
         final EditText segsEd = customLayout.findViewById(R.id.segundosEditText);
-        segsEd.setFilters(new InputFilter[]{new InputFilterMinMax(getString(R.string.minSegs),getString(R.string.maxSegs))});
+        segsEd.setFilters(new InputFilter[]{new InputFilterMinMax(getString(R.string.minSegs), getString(R.string.maxSegs))});
         builder.setPositiveButton(R.string.alDiag_posButton, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
-        int dist = 0;
-        int horas = 0;
-        int mins = 0;
-        int segs = 0;
-        String horasFormateadas = getString(R.string._00);
-        String minsFormateados = getString(R.string._00);
-        String segsFormateados = getString(R.string._00);
-        double minsKm;
+                int dist = 0;
+                int horas = 0;
+                int mins = 0;
+                int segs = 0;
+                String horasFormateadas = getString(R.string._00);
+                String minsFormateados = getString(R.string._00);
+                String segsFormateados = getString(R.string._00);
+                double minsKm;
 
-        if (horasEd.getText().toString().isEmpty() && minsEd.getText().toString().isEmpty() && segsEd.getText().toString().isEmpty() && distEd.getText().toString().isEmpty()){
-                Toast toast = Toast.makeText(MainActivity.this,"No se admiten todos los campos vacíos.", Toast.LENGTH_LONG);
-                toast.show();
-                addTraining();
+                if (horasEd.getText().toString().isEmpty() && minsEd.getText().toString().isEmpty() && segsEd.getText().toString().isEmpty() && distEd.getText().toString().isEmpty()) {
+                    Toast toast = Toast.makeText(MainActivity.this, "No se admiten todos los campos vacíos.", Toast.LENGTH_LONG);
+                    toast.show();
+                    addTraining();
 
-        }else if(horasEd.getText().toString().isEmpty() && minsEd.getText().toString().isEmpty() && segsEd.getText().toString().isEmpty() || distEd.getText().toString().isEmpty()) {
-            Toast toast = Toast.makeText(MainActivity.this, "Es necesario introducir una distancia o alguna unidad de tiempo.", Toast.LENGTH_LONG);
-            toast.show();
-            addTraining();
-        }else {
+                } else if (horasEd.getText().toString().isEmpty() && minsEd.getText().toString().isEmpty() && segsEd.getText().toString().isEmpty() || distEd.getText().toString().isEmpty()) {
+                    Toast toast = Toast.makeText(MainActivity.this, "Es necesario introducir una distancia o alguna unidad de tiempo.", Toast.LENGTH_LONG);
+                    toast.show();
+                    addTraining();
+                } else {
 
-            if(!horasEd.getText().toString().isEmpty()){
-                horas = Integer.parseInt(horasEd.getText().toString());
-                horasFormateadas = String.format("%02d", horas); //Deberia poner los numeros con dos cifras rellenando con 0s
-            }
-            if(!minsEd.getText().toString().isEmpty()){
-                mins = Integer.parseInt(minsEd.getText().toString());
-                minsFormateados = String.format("%02d", mins);
-            }
-            if(!segsEd.getText().toString().isEmpty()){
-                segs = Integer.parseInt(segsEd.getText().toString());
-                segsFormateados = String.format("%02d", segs);
-            }
-            if(!distEd.getText().toString().isEmpty()){
-                dist = Integer.parseInt(distEd.getText().toString());
-            }
-            if(fechaEd.getText().toString().isEmpty()){
-                int day, month, year;
-                Calendar calendario  = Calendar.getInstance();
-                day = calendario.get(Calendar.DAY_OF_MONTH);
-                month = calendario.get(Calendar.MONTH);
-                year = calendario.get(Calendar.YEAR);
-                String selectedDate = day+"/"+month+"/"+year;
-                fecha = selectedDate;
-            }
+                    if (!horasEd.getText().toString().isEmpty()) {
+                        horas = Integer.parseInt(horasEd.getText().toString());
+                        horasFormateadas = String.format("%02d", horas); //Deberia poner los numeros con dos cifras rellenando con 0s
+                    }
+                    if (!minsEd.getText().toString().isEmpty()) {
+                        mins = Integer.parseInt(minsEd.getText().toString());
+                        minsFormateados = String.format("%02d", mins);
+                    }
+                    if (!segsEd.getText().toString().isEmpty()) {
+                        segs = Integer.parseInt(segsEd.getText().toString());
+                        segsFormateados = String.format("%02d", segs);
+                    }
+                    if (!distEd.getText().toString().isEmpty()) {
+                        dist = Integer.parseInt(distEd.getText().toString());
+                    }
+                    if (fechaEd.getText().toString().isEmpty()) {
+                        int day, month, year;
+                        Calendar calendario = Calendar.getInstance();
+                        day = calendario.get(Calendar.DAY_OF_MONTH);
+                        month = calendario.get(Calendar.MONTH);
+                        year = calendario.get(Calendar.YEAR);
+                        String selectedDate = day + "/" + month + "/" + year;
+                        fecha = selectedDate;
+                    }
 
-            minsKm = (double)(((horas*60 + mins)*1000)/dist);
+                    minsKm = (double) (((horas * 60 + mins) * 1000) / dist);
 
-            train[0] = new Entrenamiento(fecha, dist, horas, mins, segs, minsKm);
-            String textoVisible = fecha +
-                    " Distancia: " + train[0].getDistancia()+"m" +
-                    " Tiempo: " + horasFormateadas + ":" + minsFormateados + ":" + segsFormateados;
-//            String texto = train[0].toString();
 
-            //Añadir a la base de datos
-            mTrainLab.addTrain(train[0]);
+                    train[0] = new Entrenamiento(fecha, dist, horas, mins, segs, minsKm);
 
-            //Añade el texto formateado
-            MainActivity.this.listAdapter.add(textoVisible);
-            MainActivity.this.listAdapter.notifyDataSetChanged();
-            MainActivity.this.entrenamientos.add(train[0]);
-        }
+                    if (horas == 0 && mins == 0 && segs == 0) {
+                        Toast toast = Toast.makeText(MainActivity.this, "El tiempo no puede ser 00:00:00", Toast.LENGTH_LONG);
+                        toast.show();
+                        addTraining();
+                    } else {
+                        String textoVisible = fecha +
+                                " Distancia: " + train[0].getDistancia() + "m" +
+                                " Tiempo: " + horasFormateadas + ":" + minsFormateados + ":" + segsFormateados;
 
+
+                        //Añadir a la base de datos
+                        mTrainLab.addTrain(train[0]);
+
+                        //Añade el texto formateado
+                        MainActivity.this.listAdapter.add(textoVisible);
+                        MainActivity.this.listAdapter.notifyDataSetChanged();
+                        MainActivity.this.entrenamientos.add(train[0]);
+                    }
+                }
             }
         });
 
@@ -278,7 +283,7 @@ public class MainActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    public void mostrar(int position){
+    public void mostrar(int position) {
         String formattedVelMedia = "";
         String formattedMinsKm = "";
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(MainActivity.this);
@@ -288,39 +293,39 @@ public class MainActivity extends AppCompatActivity {
         TextView title = new TextView(this);
         title.setText(R.string.training);
         title.setTextSize(25);
-        title.setPadding(25,25,25,25);
+        title.setPadding(25, 25, 25, 25);
         title.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
         title.setTextColor(getResources().getColor(R.color.blanco));
         title.setGravity(Gravity.CENTER);
         dialogBuilder.setCustomTitle(title);
 
         TextView fechaTextView = customLayout.findViewById(R.id.textViewFecha);
-        fechaTextView.setText(getString(R.string.fechaTextView)+MainActivity.this.entrenamientos.get(position).getFecha());
+        fechaTextView.setText(getString(R.string.fechaTextView) + MainActivity.this.entrenamientos.get(position).getFecha());
 
         TextView distanciaTextView = customLayout.findViewById(R.id.textViewDistancia);
-        distanciaTextView.setText(getString(R.string.distanciaTextView)+String.valueOf(MainActivity.this.entrenamientos.get(position).getDistancia()));
+        distanciaTextView.setText(getString(R.string.distanciaTextView) + MainActivity.this.entrenamientos.get(position).getDistancia());
 
         TextView tiempoTextView = customLayout.findViewById(R.id.textViewTiempo);
-        tiempoTextView.setText(getString(R.string.tiempoTextView)+MainActivity.this.entrenamientos.get(position).getHoras()+":"+MainActivity.this.entrenamientos
-                .get(position).getMinutos()+":"+MainActivity.this.entrenamientos.get(position).getSegundos());
+        tiempoTextView.setText(getString(R.string.tiempoTextView) + MainActivity.this.entrenamientos.get(position).getHoras() + ":" + MainActivity.this.entrenamientos
+                .get(position).getMinutos() + ":" + MainActivity.this.entrenamientos.get(position).getSegundos());
 
-        int minutosHora = (MainActivity.this.entrenamientos.get(position).getHoras()*60) + MainActivity.this.entrenamientos
+        int minutosHora = (MainActivity.this.entrenamientos.get(position).getHoras() * 60) + MainActivity.this.entrenamientos
                 .get(position).getMinutos();
 
-        double minutosKm = 0;
-        double kilometros = (double)MainActivity.this.entrenamientos.get(position).getDistancia()/(double)1000;
-        if(MainActivity.this.entrenamientos.get(position).getDistancia()!=0) {
-            minutosKm = (double)minutosHora / kilometros;
+        double minutosKm;
+        double kilometros = (double) MainActivity.this.entrenamientos.get(position).getDistancia() / (double) 1000;
+        if (MainActivity.this.entrenamientos.get(position).getDistancia() != 0) {
+            minutosKm = (double) minutosHora / kilometros;
             formattedMinsKm = String.format("%.2f", minutosKm);
         }
 
         TextView minsxKm = customLayout.findViewById(R.id.textViewMinsKm);
         minsxKm.setText(getString(R.string.minsKm) + formattedMinsKm);
-        double velMedia = 0;
-        double horas = 0;
-        horas = ((double)MainActivity.this.entrenamientos.get(position).getHoras() + ((double)MainActivity.this.entrenamientos.get(position).getMinutos()/(double)60));
-        if(horas!=0) {
-            velMedia = ((double)MainActivity.this.entrenamientos.get(position).getDistancia()/(double)1000) / horas;
+        double velMedia;
+        double horas;
+        horas = ((double) MainActivity.this.entrenamientos.get(position).getHoras() + ((double) MainActivity.this.entrenamientos.get(position).getMinutos() / (double) 60));
+        if (horas != 0) {
+            velMedia = ((double) MainActivity.this.entrenamientos.get(position).getDistancia() / (double) 1000) / horas;
             formattedVelMedia = String.format("%.2f", velMedia);
         }
 
@@ -329,16 +334,16 @@ public class MainActivity extends AppCompatActivity {
         dialogBuilder.create().show();
     }
 
-    public void modificar(){
+    public void modificar() {
         final Entrenamiento[] train = new Entrenamiento[1];
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        final View customLayout = getLayoutInflater().inflate(R.layout.alert_dialog_train,null);
+        final View customLayout = getLayoutInflater().inflate(R.layout.alert_dialog_train, null);
         builder.setView(customLayout);
 
         TextView title = new TextView(this);
         title.setText(R.string.modificar);
         title.setTextSize(25);
-        title.setPadding(25,25,25,25);
+        title.setPadding(25, 25, 25, 25);
         title.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
         title.setTextColor(getResources().getColor(R.color.blanco));
         title.setGravity(Gravity.CENTER);
@@ -371,57 +376,64 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
-            int horas = entrenamientos.get(posicion).getHoras();
+                int horas = entrenamientos.get(posicion).getHoras();
                 horasFormateadas[0] = String.format("%02d", horas);
-            if(!horasEd.getText().toString().isEmpty()){
-                horas = Integer.parseInt(horasEd.getText().toString());
-                horasFormateadas[0] = String.format("%02d", horas);
-            }
+                if (!horasEd.getText().toString().isEmpty()) {
+                    horas = Integer.parseInt(horasEd.getText().toString());
+                    horasFormateadas[0] = String.format("%02d", horas);
+                }
 
-            int mins = entrenamientos.get(posicion).getMinutos();
+                int mins = entrenamientos.get(posicion).getMinutos();
                 minsFormateados[0] = String.format("%02d", mins);
-            if(!minsEd.getText().toString().isEmpty()) {
-                mins = Integer.parseInt(minsEd.getText().toString());
-                minsFormateados[0] = String.format("%02d", mins);
-            }
+                if (!minsEd.getText().toString().isEmpty()) {
+                    mins = Integer.parseInt(minsEd.getText().toString());
+                    minsFormateados[0] = String.format("%02d", mins);
+                }
 
-            int segs = entrenamientos.get(posicion).getSegundos();
+                int segs = entrenamientos.get(posicion).getSegundos();
                 segsFormateados[0] = String.format("%02d", segs);
-            if(!segsEd.getText().toString().isEmpty()) {
-                segs = Integer.parseInt(segsEd.getText().toString());
-                segsFormateados[0] = String.format("%02d", segs);
-            }
+                if (!segsEd.getText().toString().isEmpty()) {
+                    segs = Integer.parseInt(segsEd.getText().toString());
+                    segsFormateados[0] = String.format("%02d", segs);
+                }
 
-            int dist = entrenamientos.get(posicion).getDistancia();
-            if(!distEd.getText().toString().isEmpty()) {
-                dist = Integer.parseInt(distEd.getText().toString());
-            }
-            String fechaAntigua = entrenamientos.get(posicion).getFecha();
-            if(!fechaEd.getText().toString().isEmpty()){
-                fechaAntigua = fechaEd.getText().toString();
-            }
-            double minsKm = entrenamientos.get(posicion).getMinsKm();
+                int dist = entrenamientos.get(posicion).getDistancia();
+                if (!distEd.getText().toString().isEmpty()) {
+                    dist = Integer.parseInt(distEd.getText().toString());
+                }
+                String fechaAntigua = entrenamientos.get(posicion).getFecha();
+                if (!fechaEd.getText().toString().isEmpty()) {
+                    fechaAntigua = fechaEd.getText().toString();
+                }
+                double minsKm = entrenamientos.get(posicion).getMinsKm();
 
-            train[0] = new Entrenamiento(fechaAntigua,dist,horas,mins,segs,minsKm);
-            String texto = train[0].toString();
+                train[0] = new Entrenamiento(fechaAntigua, dist, horas, mins, segs, minsKm);
 
-            String textoVisible = fechaAntigua +
-                    " Distancia: " + train[0].getDistancia()+"m" +
-                    " Tiempo: " + horasFormateadas[0] + ":" + minsFormateados[0] + ":" + segsFormateados[0];
+                if (horas == 0 && mins == 0 && segs == 0) {
+                    Toast toast = Toast.makeText(MainActivity.this, "El tiempo no puede ser 00:00:00", Toast.LENGTH_LONG);
+                    toast.show();
+                    modificar();
+                } else {
+                    String textoVisible = fechaAntigua +
+                            " Distancia: " + train[0].getDistancia() + "m" +
+                            " Tiempo: " + horasFormateadas[0] + ":" + minsFormateados[0] + ":" + segsFormateados[0];
 
 
-            //Modificar en la base de datos
-            mTrainLab.updateTrain(train[0]);
+                    //Modificar en la base de datos
+                    mTrainLab.updateTrain(train[0]);
 
-            MainActivity.this.listAdapter.remove(itemList.get(posicion));
-            MainActivity.this.listAdapter.add(textoVisible);
-            MainActivity.this.listAdapter.notifyDataSetChanged();
-            MainActivity.this.entrenamientos.remove(posicion);
-            MainActivity.this.entrenamientos.add(posicion,train[0]);
+                    MainActivity.this.listAdapter.remove(itemList.get(posicion));
+                    MainActivity.this.listAdapter.add(textoVisible);
+                    MainActivity.this.listAdapter.notifyDataSetChanged();
+                    MainActivity.this.entrenamientos.remove(posicion);
+                    MainActivity.this.entrenamientos.add(posicion, train[0]);
+                }
+
+
             }
         });
 
-        builder.setNegativeButton(R.string.alDiag_canButton,null);
+        builder.setNegativeButton(R.string.alDiag_canButton, null);
         builder.create().show();
 
     }
@@ -435,25 +447,25 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onContextItemSelected(@NonNull MenuItem item) {
-        if(item.getItemId()==R.id.mostrar){
-            AdapterView.AdapterContextMenuInfo info =(AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        if (item.getItemId() == R.id.mostrar) {
+            AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
             posicion = (int) info.id;
             mostrar(posicion);
-        }else if(item.getItemId()==R.id.modificar){
-            AdapterView.AdapterContextMenuInfo info =(AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        } else if (item.getItemId() == R.id.modificar) {
+            AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
             posicion = (int) info.id;
             modificar();
-        }else if(item.getItemId()==R.id.borrar){
-            AdapterView.AdapterContextMenuInfo info =(AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        } else if (item.getItemId() == R.id.borrar) {
+            AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
             posicion = (int) info.id;
             itemList.remove(posicion);
-            
+
             //Borrar elemento de la base de datos
             mTrainLab.delTrain(entrenamientos.get(posicion));
 
             entrenamientos.remove(posicion);
             this.listAdapter.notifyDataSetChanged();
-        }else{
+        } else {
             return false;
         }
         return true;
@@ -476,43 +488,43 @@ public class MainActivity extends AppCompatActivity {
             TextView title = new TextView(this);
             title.setText(R.string.estadisticas);
             title.setTextSize(25);
-            title.setPadding(25,25,25,25);
+            title.setPadding(25, 25, 25, 25);
             title.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
             title.setTextColor(getResources().getColor(R.color.blanco));
             title.setGravity(Gravity.CENTER);
             builder.setCustomTitle(title);
 
 
-            View customLayout = getLayoutInflater().inflate(R.layout.stats,null);
+            View customLayout = getLayoutInflater().inflate(R.layout.stats, null);
             builder.setView(customLayout);
             final TextView kmTotales = customLayout.findViewById(R.id.resultadoKmTotales);
             final TextView minsKm = customLayout.findViewById(R.id.resultadoMinsKm);
-            for(Entrenamiento ent : entrenamientos){
+            for (Entrenamiento ent : entrenamientos) {
                 contadorKm = contadorKm + ent.getDistancia();
-                contadorMins = contadorMins + ent.getMinutos() + (ent.getHoras()*60);
+                contadorMins = contadorMins + ent.getMinutos() + (ent.getHoras() * 60);
             }
-            final double finalContadorKm = contadorKm/1000;
-            final double minutosXkm = contadorMins/finalContadorKm;
+            final double finalContadorKm = contadorKm / 1000;
+            final double minutosXkm = contadorMins / finalContadorKm;
             kmTotales.setText(String.valueOf(finalContadorKm));
-            if(contadorMins == 0 || finalContadorKm == 0){
+            if (contadorMins == 0 || finalContadorKm == 0) {
                 minsKm.setText(R.string._00);
-            }else {
+            } else {
                 minsKm.setText(String.format("%.2f", minutosXkm));
             }
             builder.setPositiveButton(R.string.alDiag_posButton, null);
             builder.create().show();
             return true;
-        }else if(id==R.id.add){
+        } else if (id == R.id.add) {
             addTraining();
             return true;
-        }else if (id==R.id.mod){
+        } else if (id == R.id.mod) {
             final AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
 
             TextView title = new TextView(this);
             title.setText(R.string.modificar);
             title.setTextSize(25);
-            title.setPadding(25,25,25,25);
+            title.setPadding(25, 25, 25, 25);
             title.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
             title.setTextColor(getResources().getColor(R.color.blanco));
             title.setGravity(Gravity.CENTER);
@@ -520,28 +532,28 @@ public class MainActivity extends AppCompatActivity {
 
             int checkedItem = -1;
             builder.setSingleChoiceItems(listAdapter, checkedItem, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                        posicion=which;
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    posicion = which;
 
-                        }
-                    });
+                }
+            });
             builder.setPositiveButton(R.string.alDiag_posButton, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     modificar();
                 }
             });
-            builder.setNegativeButton(R.string.alDiag_canButton,null);
+            builder.setNegativeButton(R.string.alDiag_canButton, null);
             builder.create().show();
             return true;
-        }else if (id == R.id.clear){
+        } else if (id == R.id.clear) {
             final AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
             TextView title = new TextView(this);
             title.setText(R.string.eliminar);
             title.setTextSize(25);
-            title.setPadding(25,25,25,25);
+            title.setPadding(25, 25, 25, 25);
             title.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
             title.setTextColor(getResources().getColor(R.color.blanco));
             title.setGravity(Gravity.CENTER);
@@ -552,9 +564,9 @@ public class MainActivity extends AppCompatActivity {
             builder.setMultiChoiceItems(cs, null, new DialogInterface.OnMultiChoiceClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which, boolean isChecked) {
-                    if(isChecked){
+                    if (isChecked) {
                         itemsSelected.add(posicion);
-                    }else if (itemsSelected.contains(posicion)){
+                    } else if (itemsSelected.contains(posicion)) {
                         itemsSelected.remove(Integer.valueOf(posicion));
                     }
                 }
@@ -569,7 +581,7 @@ public class MainActivity extends AppCompatActivity {
                     aceptarBuilder.setPositiveButton(R.string.alDiag_posButton, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            for (int i :itemsSelected){
+                            for (int i : itemsSelected) {
                                 itemList.remove(i);
                                 entrenamientos.remove(i);
                                 listAdapter.notifyDataSetChanged();
@@ -582,18 +594,16 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
-            
-
-            builder.setNegativeButton(R.string.alDiag_canButton,null);
+            builder.setNegativeButton(R.string.alDiag_canButton, null);
             builder.create().show();
 
             return true;
-        }else{
+        } else {
             return false;
         }
     }
 
-    private void showDatePickerDialog(){
+    private void showDatePickerDialog() {
         int day, month, year;
         final Calendar calendario = Calendar.getInstance();
         day = calendario.get(Calendar.DAY_OF_MONTH);
@@ -602,14 +612,14 @@ public class MainActivity extends AppCompatActivity {
         DatePickerDialog datePickerDialog = new DatePickerDialog(MainActivity.this, new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year1, int month1, int dayOfMonth) {
-                calendario.set(Calendar.DAY_OF_MONTH,dayOfMonth);
+                calendario.set(Calendar.DAY_OF_MONTH, dayOfMonth);
                 calendario.set(Calendar.MONTH, month1);
                 calendario.set(Calendar.YEAR, year1);
-                String selectedDate = dayOfMonth+"/"+month1+"/"+year1;
+                String selectedDate = dayOfMonth + "/" + month1 + "/" + year1;
                 fecha = selectedDate;
                 fechaEd.setText(selectedDate);
             }
-        },year, month,day);
+        }, year, month, day);
         datePickerDialog.show();
     }
 }
