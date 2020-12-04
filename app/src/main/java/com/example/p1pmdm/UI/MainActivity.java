@@ -583,13 +583,13 @@ public class MainActivity extends AppCompatActivity {
                         public void onClick(DialogInterface dialog, int which) {
                             for (int i : itemsSelected) {
                                 itemList.remove(i);
+                                mTrainLab.delTrain(entrenamientos.get(i));
                                 entrenamientos.remove(i);
                                 listAdapter.notifyDataSetChanged();
                             }
                         }
                     });
                     aceptarBuilder.setNegativeButton(R.string.alDiag_canButton, null);
-
                     aceptarBuilder.create().show();
                 }
             });

@@ -1,0 +1,69 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "e410e545f8f64d301ed045d14bc40349",
+    "entities": [
+      {
+        "tableName": "entrenamiento",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`idTrain` TEXT NOT NULL, `fecha` TEXT, `hora` INTEGER NOT NULL, `minuto` INTEGER NOT NULL, `segundo` INTEGER NOT NULL, `distancia` INTEGER NOT NULL, `minsKm` REAL NOT NULL, PRIMARY KEY(`idTrain`))",
+        "fields": [
+          {
+            "fieldPath": "idTrain",
+            "columnName": "idTrain",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "fecha",
+            "columnName": "fecha",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "horas",
+            "columnName": "hora",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "minutos",
+            "columnName": "minuto",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "segundos",
+            "columnName": "segundo",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "distancia",
+            "columnName": "distancia",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "minsKm",
+            "columnName": "minsKm",
+            "affinity": "REAL",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "idTrain"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"e410e545f8f64d301ed045d14bc40349\")"
+    ]
+  }
+}
