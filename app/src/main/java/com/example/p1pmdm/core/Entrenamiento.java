@@ -33,8 +33,7 @@ public class Entrenamiento {
         this.segundos = segundos;
         this.distancia = distancia;
         this.minsKm = minsKm;
-
-        idTrain = UUID.randomUUID().toString();
+        this.idTrain = UUID.randomUUID().toString();
     }
 
     @NonNull

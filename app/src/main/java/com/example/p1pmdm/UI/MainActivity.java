@@ -4,8 +4,10 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.InputFilter;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -47,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText fechaEd;
     private String fecha;
     private EntrenamientoLab mTrainLab;
+    boolean doubleBackToExitPressedOnce = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,13 +57,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         //Crea el archivo para guardar las estadisticas
         File estadisticas = new File(MainActivity.this.getFilesDir(), "EstadisticasGenerales.txt");
-
-
         mTrainLab = EntrenamientoLab.get(this);
-
-        //Borrar toda la base de datos
-//        mTrainLab.deleteAll();
-
         this.entrenamientos = mTrainLab.getEntrenamientos();
 
         this.itemList = new ArrayList<>();
@@ -100,6 +97,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 MainActivity.this.addTraining();
+
+                /*
+                LLamar a una nueva actividad, que se encargue de hacer todo el proceso de añadit a la BD
+                que devuelva el id del objeto entrenamiento para poder añadirlo a la lista y usar el adapter para
+                mostrarlo por pantalla.
+                 */
+
+
+
             }
         });
     }
@@ -171,6 +177,28 @@ public class MainActivity extends AppCompatActivity {
         editor.putString(getString(R.string.peso), peso.getText().toString());
 
         editor.apply();
+    }
+
+    public void launchAddActivity(View view){
+        Intent intent = new Intent(MainActivity.this, AddActivity.class);
+
+    }
+
+
+    @Override
+    public void onBackPressed() {
+        if(doubleBackToExitPressedOnce) {
+            super.onBackPressed();
+            return;
+        }
+        this.doubleBackToExitPressedOnce = true;
+        Toast.makeText(this,"Presiona atrás de nuevo para salir.", Toast.LENGTH_SHORT).show();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                doubleBackToExitPressedOnce = false;
+            }
+        }, 2000);
     }
 
     public void addTraining() {
