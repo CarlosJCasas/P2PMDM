@@ -36,6 +36,10 @@ public class Entrenamiento {
         this.idTrain = UUID.randomUUID().toString();
     }
 
+    public Entrenamiento() {
+
+    }
+
     @NonNull
     public String getIdTrain() {
         return idTrain;

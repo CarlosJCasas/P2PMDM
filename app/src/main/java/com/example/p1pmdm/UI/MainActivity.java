@@ -25,6 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.p1pmdm.DDBB.EntrenamientoLab;
@@ -96,14 +97,14 @@ public class MainActivity extends AppCompatActivity {
         floatButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MainActivity.this.addTraining();
+//                MainActivity.this.addTraining();
 
                 /*
-                LLamar a una nueva actividad, que se encargue de hacer todo el proceso de añadit a la BD
+                LLamar a una nueva actividad, que se encargue de hacer tod el proceso de añadit a la BD
                 que devuelva el id del objeto entrenamiento para poder añadirlo a la lista y usar el adapter para
                 mostrarlo por pantalla.
                  */
-
+                launchAddActivity(v);
 
 
             }
@@ -181,9 +182,49 @@ public class MainActivity extends AppCompatActivity {
 
     public void launchAddActivity(View view){
         Intent intent = new Intent(MainActivity.this, AddActivity.class);
+        startActivityForResult(intent, 2);
+
 
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == 2){
+            String id = data.getStringExtra("uuid");
+            Entrenamiento trainSecondActivity = mTrainLab.getEntrenamiento(id);
+            String horasFormateadas = getString(R.string._00);
+            String minsFormateados = getString(R.string._00);
+            String segsFormateados = getString(R.string._00);
+            horasFormateadas = String.format("%02d", trainSecondActivity.getHoras());
+            minsFormateados = String.format("%02d", trainSecondActivity.getMinutos());
+            segsFormateados = String.format("%02d", trainSecondActivity.getSegundos());
+            //Aqui hacer tod para meter en las listas lo necesario para que aparezca en vista
+            String textoVisible = trainSecondActivity.getFecha() +
+                    " Distancia: " + trainSecondActivity.getDistancia() + "m" +
+                    " Tiempo: " + horasFormateadas + ":" + minsFormateados + ":" + segsFormateados;
+            MainActivity.this.listAdapter.add(textoVisible);
+            MainActivity.this.listAdapter.notifyDataSetChanged();
+            MainActivity.this.entrenamientos.add(trainSecondActivity);
+        }
+        if(resultCode==3){
+            String id = data.getStringExtra("uuid");
+            Entrenamiento trainModificarActivity = mTrainLab.getEntrenamiento(id);
+            String horasFormateadas = getString(R.string._00);
+            String minsFormateados = getString(R.string._00);
+            String segsFormateados = getString(R.string._00);
+            horasFormateadas = String.format("%02d", trainModificarActivity.getHoras());
+            minsFormateados = String.format("%02d", trainModificarActivity.getMinutos());
+            segsFormateados = String.format("%02d", trainModificarActivity.getSegundos());
+            //Aqui hacer tod para meter en las listas lo necesario para que aparezca en vista
+            String textoVisible = trainModificarActivity.getFecha() +
+                    " Distancia: " + trainModificarActivity.getDistancia() + "m" +
+                    " Tiempo: " + horasFormateadas + ":" + minsFormateados + ":" + segsFormateados;
+            itemList.remove(posicion);
+            MainActivity.this.listAdapter.add(textoVisible);
+            MainActivity.this.listAdapter.notifyDataSetChanged();
+        }
+    }
 
     @Override
     public void onBackPressed() {
@@ -201,115 +242,114 @@ public class MainActivity extends AppCompatActivity {
         }, 2000);
     }
 
-    public void addTraining() {
-
-        final Entrenamiento[] train = new Entrenamiento[1];
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        final View customLayout = getLayoutInflater().inflate(R.layout.alert_dialog_train, null);
-        builder.setView(customLayout);
-        TextView title = new TextView(this);
-        title.setText(R.string.alDiag_train);
-        title.setTextSize(25);
-        title.setPadding(25, 25, 25, 25);
-        title.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-        title.setTextColor(getResources().getColor(R.color.blanco));
-        title.setGravity(Gravity.CENTER);
-        builder.setCustomTitle(title);
-
-        fechaEd = customLayout.findViewById(R.id.fechaEditText);
-        fechaEd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showDatePickerDialog();
-            }
-        });
-
-        final EditText distEd = customLayout.findViewById(R.id.distanciaEditText);
-        final EditText horasEd = customLayout.findViewById(R.id.horasEditText);
-        final EditText minsEd = customLayout.findViewById(R.id.minutosEditText);
-        minsEd.setFilters(new InputFilter[]{new InputFilterMinMax(getString(R.string.minSegs), getString(R.string.maxSegs))});
-        final EditText segsEd = customLayout.findViewById(R.id.segundosEditText);
-        segsEd.setFilters(new InputFilter[]{new InputFilterMinMax(getString(R.string.minSegs), getString(R.string.maxSegs))});
-        builder.setPositiveButton(R.string.alDiag_posButton, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-                int dist = 0;
-                int horas = 0;
-                int mins = 0;
-                int segs = 0;
-                String horasFormateadas = getString(R.string._00);
-                String minsFormateados = getString(R.string._00);
-                String segsFormateados = getString(R.string._00);
-                double minsKm;
-
-                if (horasEd.getText().toString().isEmpty() && minsEd.getText().toString().isEmpty() && segsEd.getText().toString().isEmpty() && distEd.getText().toString().isEmpty()) {
-                    Toast toast = Toast.makeText(MainActivity.this, "No se admiten todos los campos vacíos.", Toast.LENGTH_LONG);
-                    toast.show();
-                    addTraining();
-
-                } else if (horasEd.getText().toString().isEmpty() && minsEd.getText().toString().isEmpty() && segsEd.getText().toString().isEmpty() || distEd.getText().toString().isEmpty()) {
-                    Toast toast = Toast.makeText(MainActivity.this, "Es necesario introducir una distancia o alguna unidad de tiempo.", Toast.LENGTH_LONG);
-                    toast.show();
-                    addTraining();
-                } else {
-
-                    if (!horasEd.getText().toString().isEmpty()) {
-                        horas = Integer.parseInt(horasEd.getText().toString());
-                        horasFormateadas = String.format("%02d", horas); //Deberia poner los numeros con dos cifras rellenando con 0s
-                    }
-                    if (!minsEd.getText().toString().isEmpty()) {
-                        mins = Integer.parseInt(minsEd.getText().toString());
-                        minsFormateados = String.format("%02d", mins);
-                    }
-                    if (!segsEd.getText().toString().isEmpty()) {
-                        segs = Integer.parseInt(segsEd.getText().toString());
-                        segsFormateados = String.format("%02d", segs);
-                    }
-                    if (!distEd.getText().toString().isEmpty()) {
-                        dist = Integer.parseInt(distEd.getText().toString());
-                    }
-                    if (fechaEd.getText().toString().isEmpty()) {
-                        int day, month, year;
-                        Calendar calendario = Calendar.getInstance();
-                        day = calendario.get(Calendar.DAY_OF_MONTH);
-                        month = calendario.get(Calendar.MONTH);
-                        year = calendario.get(Calendar.YEAR);
-                        String selectedDate = day + "/" + month + "/" + year;
-                        fecha = selectedDate;
-                    }
-
-                    minsKm = (double) (((horas * 60 + mins) * 1000) / dist);
-
-
-                    train[0] = new Entrenamiento(fecha, dist, horas, mins, segs, minsKm);
-
-                    if (horas == 0 && mins == 0 && segs == 0) {
-                        Toast toast = Toast.makeText(MainActivity.this, "El tiempo no puede ser 00:00:00", Toast.LENGTH_LONG);
-                        toast.show();
-                        addTraining();
-                    } else {
-                        String textoVisible = fecha +
-                                " Distancia: " + train[0].getDistancia() + "m" +
-                                " Tiempo: " + horasFormateadas + ":" + minsFormateados + ":" + segsFormateados;
-
-
-                        //Añadir a la base de datos
-                        mTrainLab.addTrain(train[0]);
-
-                        //Añade el texto formateado
-                        MainActivity.this.listAdapter.add(textoVisible);
-                        MainActivity.this.listAdapter.notifyDataSetChanged();
-                        MainActivity.this.entrenamientos.add(train[0]);
-                    }
-                }
-            }
-        });
-
-        builder.setNegativeButton(R.string.alDiag_canButton, null);
-        final AlertDialog dialog = builder.create();
-        dialog.show();
-    }
+//    public void addTraining() {
+//
+//        final Entrenamiento[] train = new Entrenamiento[1];
+//        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//        final View customLayout = getLayoutInflater().inflate(R.layout.alert_dialog_train, null);
+//        builder.setView(customLayout);
+//        TextView title = new TextView(this);
+//        title.setText(R.string.alDiag_train);
+//        title.setTextSize(25);
+//        title.setPadding(25, 25, 25, 25);
+//        title.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+//        title.setTextColor(getResources().getColor(R.color.blanco));
+//        title.setGravity(Gravity.CENTER);
+//        builder.setCustomTitle(title);
+//
+//        fechaEd = customLayout.findViewById(R.id.fechaEditText);
+//        fechaEd.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                showDatePickerDialog();
+//            }
+//        });
+//
+//        final EditText distEd = customLayout.findViewById(R.id.distanciaEditText);
+//        final EditText horasEd = customLayout.findViewById(R.id.horasEditText);
+//        final EditText minsEd = customLayout.findViewById(R.id.minutosEditText);
+//        minsEd.setFilters(new InputFilter[]{new InputFilterMinMax(getString(R.string.minSegs), getString(R.string.maxSegs))});
+//        final EditText segsEd = customLayout.findViewById(R.id.segundosEditText);
+//        segsEd.setFilters(new InputFilter[]{new InputFilterMinMax(getString(R.string.minSegs), getString(R.string.maxSegs))});
+//        builder.setPositiveButton(R.string.alDiag_posButton, new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//
+//                int dist = 0;
+//                int horas = 0;
+//                int mins = 0;
+//                int segs = 0;
+//                String horasFormateadas = getString(R.string._00);
+//                String minsFormateados = getString(R.string._00);
+//                String segsFormateados = getString(R.string._00);
+//
+//                double minsKm;
+//
+//                if (horasEd.getText().toString().isEmpty() && minsEd.getText().toString().isEmpty() && segsEd.getText().toString().isEmpty() && distEd.getText().toString().isEmpty()) {
+//                    Toast toast = Toast.makeText(MainActivity.this, "No se admiten todos los campos vacíos.", Toast.LENGTH_LONG);
+//                    toast.show();
+//                    addTraining();
+//                } else if (horasEd.getText().toString().isEmpty() && minsEd.getText().toString().isEmpty() && segsEd.getText().toString().isEmpty() || distEd.getText().toString().isEmpty()) {
+//                    Toast toast = Toast.makeText(MainActivity.this, "Es necesario introducir una distancia o alguna unidad de tiempo.", Toast.LENGTH_LONG);
+//                    toast.show();
+//                    addTraining();
+//                } else {
+//                    if (!horasEd.getText().toString().isEmpty()) {
+//                        horas = Integer.parseInt(horasEd.getText().toString());
+//                        horasFormateadas = String.format("%02d", horas); //Deberia poner los numeros con dos cifras rellenando con 0s
+//                    }
+//                    if (!minsEd.getText().toString().isEmpty()) {
+//                        mins = Integer.parseInt(minsEd.getText().toString());
+//                        minsFormateados = String.format("%02d", mins);
+//                    }
+//                    if (!segsEd.getText().toString().isEmpty()) {
+//                        segs = Integer.parseInt(segsEd.getText().toString());
+//                        segsFormateados = String.format("%02d", segs);
+//                    }
+//                    if (!distEd.getText().toString().isEmpty()) {
+//                        dist = Integer.parseInt(distEd.getText().toString());
+//                    }
+//                    if (fechaEd.getText().toString().isEmpty()) {
+//                        int day, month, year;
+//                        Calendar calendario = Calendar.getInstance();
+//                        day = calendario.get(Calendar.DAY_OF_MONTH);
+//                        month = calendario.get(Calendar.MONTH);
+//                        year = calendario.get(Calendar.YEAR);
+//                        String selectedDate = day + "/" + month + "/" + year;
+//                        fecha = selectedDate;
+//                    }
+//
+//                    minsKm = (double) (((horas * 60 + mins) * 1000) / dist);
+//
+//
+//                    train[0] = new Entrenamiento(fecha, dist, horas, mins, segs, minsKm);
+//
+//                    if (horas == 0 && mins == 0 && segs == 0) {
+//                        Toast toast = Toast.makeText(MainActivity.this, "El tiempo no puede ser 00:00:00", Toast.LENGTH_LONG);
+//                        toast.show();
+//                        addTraining();
+//                    } else {
+//                        String textoVisible = fecha +
+//                                " Distancia: " + train[0].getDistancia() + "m" +
+//                                " Tiempo: " + horasFormateadas + ":" + minsFormateados + ":" + segsFormateados;
+//
+//
+//                        //Añadir a la base de datos
+//                        mTrainLab.addTrain(train[0]);
+//
+//                        //Añade el texto formateado
+//                        MainActivity.this.listAdapter.add(textoVisible);
+//                        MainActivity.this.listAdapter.notifyDataSetChanged();
+//                        MainActivity.this.entrenamientos.add(train[0]);
+//                    }
+//                }
+//            }
+//        });
+//
+//        builder.setNegativeButton(R.string.alDiag_canButton, null);
+//        final AlertDialog dialog = builder.create();
+//        dialog.show();
+//    }
 
     public void mostrar(int position) {
         String formattedVelMedia = "";
@@ -362,109 +402,115 @@ public class MainActivity extends AppCompatActivity {
         dialogBuilder.create().show();
     }
 
-    public void modificar() {
-        final Entrenamiento[] train = new Entrenamiento[1];
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        final View customLayout = getLayoutInflater().inflate(R.layout.alert_dialog_train, null);
-        builder.setView(customLayout);
-
-        TextView title = new TextView(this);
-        title.setText(R.string.modificar);
-        title.setTextSize(25);
-        title.setPadding(25, 25, 25, 25);
-        title.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-        title.setTextColor(getResources().getColor(R.color.blanco));
-        title.setGravity(Gravity.CENTER);
-        builder.setCustomTitle(title);
-
-        fechaEd = customLayout.findViewById(R.id.fechaEditText);
-        fechaEd.setHint(entrenamientos.get(posicion).getFecha());
-        fechaEd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showDatePickerDialog();
-            }
-        });
-
-        final EditText distEd = customLayout.findViewById(R.id.distanciaEditText);
-        distEd.setHint(String.valueOf(entrenamientos.get(posicion).getDistancia()));
-        final EditText horasEd = customLayout.findViewById(R.id.horasEditText);
-        horasEd.setHint(String.valueOf(entrenamientos.get(posicion).getHoras()));
-        final EditText minsEd = customLayout.findViewById(R.id.minutosEditText);
-        minsEd.setHint(String.valueOf(entrenamientos.get(posicion).getMinutos()));
-        final EditText segsEd = customLayout.findViewById(R.id.segundosEditText);
-        segsEd.setHint(String.valueOf(entrenamientos.get(posicion).getSegundos()));
-
-        final String[] horasFormateadas = new String[1];
-        final String[] minsFormateados = new String[1];
-        final String[] segsFormateados = new String[1];
-
-
-        builder.setPositiveButton(R.string.alDiag_posButton, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-                int horas = entrenamientos.get(posicion).getHoras();
-                horasFormateadas[0] = String.format("%02d", horas);
-                if (!horasEd.getText().toString().isEmpty()) {
-                    horas = Integer.parseInt(horasEd.getText().toString());
-                    horasFormateadas[0] = String.format("%02d", horas);
-                }
-
-                int mins = entrenamientos.get(posicion).getMinutos();
-                minsFormateados[0] = String.format("%02d", mins);
-                if (!minsEd.getText().toString().isEmpty()) {
-                    mins = Integer.parseInt(minsEd.getText().toString());
-                    minsFormateados[0] = String.format("%02d", mins);
-                }
-
-                int segs = entrenamientos.get(posicion).getSegundos();
-                segsFormateados[0] = String.format("%02d", segs);
-                if (!segsEd.getText().toString().isEmpty()) {
-                    segs = Integer.parseInt(segsEd.getText().toString());
-                    segsFormateados[0] = String.format("%02d", segs);
-                }
-
-                int dist = entrenamientos.get(posicion).getDistancia();
-                if (!distEd.getText().toString().isEmpty()) {
-                    dist = Integer.parseInt(distEd.getText().toString());
-                }
-                String fechaAntigua = entrenamientos.get(posicion).getFecha();
-                if (!fechaEd.getText().toString().isEmpty()) {
-                    fechaAntigua = fechaEd.getText().toString();
-                }
-                double minsKm = entrenamientos.get(posicion).getMinsKm();
-
-                train[0] = new Entrenamiento(fechaAntigua, dist, horas, mins, segs, minsKm);
-
-                if (horas == 0 && mins == 0 && segs == 0) {
-                    Toast toast = Toast.makeText(MainActivity.this, "El tiempo no puede ser 00:00:00", Toast.LENGTH_LONG);
-                    toast.show();
-                    modificar();
-                } else {
-                    String textoVisible = fechaAntigua +
-                            " Distancia: " + train[0].getDistancia() + "m" +
-                            " Tiempo: " + horasFormateadas[0] + ":" + minsFormateados[0] + ":" + segsFormateados[0];
-
-
-                    //Modificar en la base de datos
-                    mTrainLab.updateTrain(train[0]);
-
-                    MainActivity.this.listAdapter.remove(itemList.get(posicion));
-                    MainActivity.this.listAdapter.add(textoVisible);
-                    MainActivity.this.listAdapter.notifyDataSetChanged();
-                    MainActivity.this.entrenamientos.remove(posicion);
-                    MainActivity.this.entrenamientos.add(posicion, train[0]);
-                }
-
-
-            }
-        });
-
-        builder.setNegativeButton(R.string.alDiag_canButton, null);
-        builder.create().show();
-
-    }
+//    public void modificar() {
+//        final Entrenamiento[] train = new Entrenamiento[1];
+//        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//        final View customLayout = getLayoutInflater().inflate(R.layout.alert_dialog_train, null);
+//        builder.setView(customLayout);
+//        train[0] = entrenamientos.get(posicion);
+//        TextView title = new TextView(this);
+//        title.setText(R.string.modificar);
+//        title.setTextSize(25);
+//        title.setPadding(25, 25, 25, 25);
+//        title.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+//        title.setTextColor(getResources().getColor(R.color.blanco));
+//        title.setGravity(Gravity.CENTER);
+//        builder.setCustomTitle(title);
+//
+//        fechaEd = customLayout.findViewById(R.id.fechaEditText);
+//        fechaEd.setHint(entrenamientos.get(posicion).getFecha());
+//        fechaEd.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                showDatePickerDialog();
+//            }
+//        });
+//
+//        final EditText distEd = customLayout.findViewById(R.id.distanciaEditText);
+//        distEd.setHint(String.valueOf(entrenamientos.get(posicion).getDistancia()));
+//        final EditText horasEd = customLayout.findViewById(R.id.horasEditText);
+//        horasEd.setHint(String.valueOf(entrenamientos.get(posicion).getHoras()));
+//        final EditText minsEd = customLayout.findViewById(R.id.minutosEditText);
+//        minsEd.setHint(String.valueOf(entrenamientos.get(posicion).getMinutos()));
+//        final EditText segsEd = customLayout.findViewById(R.id.segundosEditText);
+//        segsEd.setHint(String.valueOf(entrenamientos.get(posicion).getSegundos()));
+//
+//        final String[] horasFormateadas = new String[1];
+//        final String[] minsFormateados = new String[1];
+//        final String[] segsFormateados = new String[1];
+//
+//
+//        builder.setPositiveButton(R.string.alDiag_posButton, new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//
+//                int horas = entrenamientos.get(posicion).getHoras();
+//                horasFormateadas[0] = String.format("%02d", horas);
+//                if (!horasEd.getText().toString().isEmpty()) {
+//                    horas = Integer.parseInt(horasEd.getText().toString());
+//                    horasFormateadas[0] = String.format("%02d", horas);
+//                }
+//
+//                int mins = entrenamientos.get(posicion).getMinutos();
+//                minsFormateados[0] = String.format("%02d", mins);
+//                if (!minsEd.getText().toString().isEmpty()) {
+//                    mins = Integer.parseInt(minsEd.getText().toString());
+//                    minsFormateados[0] = String.format("%02d", mins);
+//                }
+//
+//                int segs = entrenamientos.get(posicion).getSegundos();
+//                segsFormateados[0] = String.format("%02d", segs);
+//                if (!segsEd.getText().toString().isEmpty()) {
+//                    segs = Integer.parseInt(segsEd.getText().toString());
+//                    segsFormateados[0] = String.format("%02d", segs);
+//                }
+//
+//                int dist = entrenamientos.get(posicion).getDistancia();
+//                if (!distEd.getText().toString().isEmpty()) {
+//                    dist = Integer.parseInt(distEd.getText().toString());
+//                }
+//                String fechaAntigua = entrenamientos.get(posicion).getFecha();
+//                if (!fechaEd.getText().toString().isEmpty()) {
+//                    fechaAntigua = fechaEd.getText().toString();
+//                }
+//                double minsKm = entrenamientos.get(posicion).getMinsKm();
+//
+//
+//                train[0].setFecha(fechaAntigua);
+//                train[0].setDistancia(dist);
+//                train[0].setHoras(horas);
+//                train[0].setMinutos(mins);
+//                train[0].setSegundos(segs);
+//                train[0].setMinsKm(minsKm);
+//
+//                if (horas == 0 && mins == 0 && segs == 0) {
+//                    Toast toast = Toast.makeText(MainActivity.this, "El tiempo no puede ser 00:00:00", Toast.LENGTH_LONG);
+//                    toast.show();
+//                    modificar();
+//                } else {
+//                    String textoVisible = fechaAntigua +
+//                            " Distancia: " + train[0].getDistancia() + "m" +
+//                            " Tiempo: " + horasFormateadas[0] + ":" + minsFormateados[0] + ":" + segsFormateados[0];
+//
+//
+//                    //Modificar en la base de datos
+//                    mTrainLab.updateTrain(train[0]);
+//
+//                    MainActivity.this.listAdapter.remove(itemList.get(posicion));
+//                    MainActivity.this.listAdapter.add(textoVisible);
+//                    MainActivity.this.listAdapter.notifyDataSetChanged();
+//                    MainActivity.this.entrenamientos.remove(posicion);
+//                    MainActivity.this.entrenamientos.add(posicion, train[0]);
+//                }
+//
+//
+//            }
+//        });
+//
+//        builder.setNegativeButton(R.string.alDiag_canButton, null);
+//        builder.create().show();
+//
+//    }
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
@@ -482,7 +528,13 @@ public class MainActivity extends AppCompatActivity {
         } else if (item.getItemId() == R.id.modificar) {
             AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
             posicion = (int) info.id;
-            modificar();
+            Entrenamiento train = entrenamientos.get(posicion);
+            String id =train.getIdTrain();
+            //Enviar id de la posición a la segunda activity
+            Intent intent = new Intent(MainActivity.this, ModificarActivity.class);
+            intent.putExtra("uuid", id);
+            startActivityForResult(intent, 3);
+
         } else if (item.getItemId() == R.id.borrar) {
             AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
             posicion = (int) info.id;
@@ -492,7 +544,7 @@ public class MainActivity extends AppCompatActivity {
             mTrainLab.delTrain(entrenamientos.get(posicion));
 
             entrenamientos.remove(posicion);
-            this.listAdapter.notifyDataSetChanged();
+            listAdapter.notifyDataSetChanged();
         } else {
             return false;
         }
@@ -543,7 +595,8 @@ public class MainActivity extends AppCompatActivity {
             builder.create().show();
             return true;
         } else if (id == R.id.add) {
-            addTraining();
+            Intent intent = new Intent(MainActivity.this, AddActivity.class);
+            startActivityForResult(intent, 2);
             return true;
         } else if (id == R.id.mod) {
             final AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -569,8 +622,16 @@ public class MainActivity extends AppCompatActivity {
             builder.setPositiveButton(R.string.alDiag_posButton, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    modificar();
+//                    modificar();
+
+                    Entrenamiento train = entrenamientos.get(posicion);
+                    String id =train.getIdTrain();
+                    //Enviar id de la posición a la segunda activity
+                    Intent intent = new Intent(MainActivity.this, ModificarActivity.class);
+                    intent.putExtra("uuid", id);
+                    startActivityForResult(intent, 3);
                 }
+
             });
             builder.setNegativeButton(R.string.alDiag_canButton, null);
             builder.create().show();
