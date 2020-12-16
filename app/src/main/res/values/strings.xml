@@ -1,15 +1,18 @@
 <resources>
-    <string name="app_name">P2PMDM Carlos Casas</string>
+    <string name="app_name">P3PMDM Carlos Casas</string>
     <string name="alDiag_posButton">Aceptar</string>
     <string name="alDiag_canButton">Cancelar</string>
     <string name="alDiag_title">Nuevo entrenamiento</string>
     <string name="horasTxt">Horas</string>
     <string name="minsTxt">Mins</string>
     <string name="segsTxt">Segs</string>
+
     <string name="distanciaTxt">Distancia (m)</string>
     <string name="fechaTxt">Fecha</string>
     <string name="fechaTextView">Fecha: &#160;</string>
+
     <string name="distanciaTextView">Distancia: &#160;</string>
+
     <string name="tiempoTextView">Tiempo: &#160;</string>
     <string name="minsKm">Mins/km: &#160;</string>
     <string name="velMed">Velocidad media: &#160;</string>
@@ -19,18 +22,21 @@
     <string name="borrar">Eliminar</string>
     <string name="estadisticas">Estadísticas</string>
     <string name="add">Añadir</string>
-    <string name="kmTotales">Kilometros totales</string>
+    <string name="mTotales">Metros totales</string>
     <string name="mins_km">Mins/km</string>
     <string name="_00">00</string>
+
     <string name="distanciaTwo">Distancia: </string>
+
     <string name="toast">Introduce la distancia recorrida</string>
     <string name="maxSegs">59</string>
     <string name="minSegs">00</string>
     <string name="fecha">Fecha</string>
     <string name="kmH">&#160;km/h</string>
+
     <string name="distanciaRecorrida">Distancia recorrida (m)</string>
     <string name="fechaHuecos">&#160;&#160;/&#160;&#160;/&#160;&#160;</string>
-
+    <string name="sigleMetros">m</string>
     <string name="nombre">Nombre</string>
     <string name="edad">Edad</string>
     <string name="altura">Altura (cm)</string>
@@ -40,5 +46,10 @@
     <string name="eliminar">Eliminar</string>
 
     <string name="metros">&#160;metros</string>
+    <string name="ms">m/s</string>
+    <string name="kmh">km/h</string>
+    <string name="tiempoTotal">Tiempo total:</string>
+    <string name="minutos">minutos</string>
+    <string name="guardar">Guardar</string>
 
 </resources>

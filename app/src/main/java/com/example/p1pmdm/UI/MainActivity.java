@@ -8,8 +8,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
-import android.text.InputFilter;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Gravity;
 import android.view.Menu;
@@ -20,22 +18,20 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.p1pmdm.DDBB.EntrenamientoLab;
 import com.example.p1pmdm.R;
 import com.example.p1pmdm.core.Entrenamiento;
-import com.example.p1pmdm.core.InputFilterMinMax;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -51,12 +47,19 @@ public class MainActivity extends AppCompatActivity {
     private String fecha;
     private EntrenamientoLab mTrainLab;
     boolean doubleBackToExitPressedOnce = false;
+    TextView nombre, edad, altura, peso;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         //Crea el archivo para guardar las estadisticas
+        nombre = findViewById(R.id.nombreTextView);
+        edad = findViewById(R.id.edadTextView);
+        altura = findViewById(R.id.alturaTextView);
+        peso = findViewById(R.id.pesoTextView);
+
+
         File estadisticas = new File(MainActivity.this.getFilesDir(), "EstadisticasGenerales.txt");
         mTrainLab = EntrenamientoLab.get(this);
         this.entrenamientos = mTrainLab.getEntrenamientos();
@@ -77,8 +80,8 @@ public class MainActivity extends AppCompatActivity {
                 minutosFormateados = String.format("%02d", entreno.getMinutos());
                 segundosFormateados = String.format("%02d", entreno.getSegundos());
                 String textoVisible = entreno.getFecha() +
-                        " Distancia: " + entreno.getDistancia() + "m" +
-                        " Tiempo: " + horasFormateadas + ":" + minutosFormateados + ":" + segundosFormateados;
+                        "      Distancia: " + entreno.getDistancia() + "m" +
+                        "\n                             Tiempo: " + horasFormateadas + ":" + minutosFormateados + ":" + segundosFormateados;
                 MainActivity.this.listAdapter.add(textoVisible);
                 MainActivity.this.listAdapter.notifyDataSetChanged();
             }
@@ -97,29 +100,28 @@ public class MainActivity extends AppCompatActivity {
         floatButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                MainActivity.this.addTraining();
-
                 /*
                 LLamar a una nueva actividad, que se encargue de hacer tod el proceso de añadit a la BD
                 que devuelva el id del objeto entrenamiento para poder añadirlo a la lista y usar el adapter para
                 mostrarlo por pantalla.
                  */
                 launchAddActivity(v);
-
-
             }
         });
+
+        ImageButton buttonEditar = findViewById(R.id.botonEditar);
+        buttonEditar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                iniciarDatosPersonales();
+            }
+        });
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        EditText nombre, edad, altura, peso;
-        nombre = findViewById(R.id.nombreEd);
-        edad = findViewById(R.id.edadEd);
-        altura = findViewById(R.id.alturaEd);
-        peso = findViewById(R.id.pesoEd);
-
         Context context = getApplicationContext();
         SharedPreferences sharedPreferences = context.getSharedPreferences(getString(R.string.misPreferencias), Context.MODE_PRIVATE);
         nombre.setText(sharedPreferences.getString(getString(R.string.nombre), ""));
@@ -162,12 +164,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-
-        EditText nombre, edad, altura, peso;
-        nombre = findViewById(R.id.nombreEd);
-        edad = findViewById(R.id.edadEd);
-        altura = findViewById(R.id.alturaEd);
-        peso = findViewById(R.id.pesoEd);
+        TextView nombre, edad, altura, peso;
+        nombre = findViewById(R.id.nombreTextView);
+        edad = findViewById(R.id.edadTextView);
+        altura = findViewById(R.id.alturaTextView);
+        peso = findViewById(R.id.pesoTextView);
 
         Context context = getApplicationContext();
         SharedPreferences sharedPreferences = context.getSharedPreferences(getString(R.string.misPreferencias), Context.MODE_PRIVATE);
@@ -176,21 +177,18 @@ public class MainActivity extends AppCompatActivity {
         editor.putString(getString(R.string.edad), edad.getText().toString());
         editor.putString(getString(R.string.altura), altura.getText().toString());
         editor.putString(getString(R.string.peso), peso.getText().toString());
-
         editor.apply();
     }
 
-    public void launchAddActivity(View view){
+    public void launchAddActivity(View view) {
         Intent intent = new Intent(MainActivity.this, AddActivity.class);
         startActivityForResult(intent, 2);
-
-
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode == 2){
+        if (resultCode == 2) {
             String id = data.getStringExtra("uuid");
             Entrenamiento trainSecondActivity = mTrainLab.getEntrenamiento(id);
             String horasFormateadas = getString(R.string._00);
@@ -201,13 +199,13 @@ public class MainActivity extends AppCompatActivity {
             segsFormateados = String.format("%02d", trainSecondActivity.getSegundos());
             //Aqui hacer tod para meter en las listas lo necesario para que aparezca en vista
             String textoVisible = trainSecondActivity.getFecha() +
-                    " Distancia: " + trainSecondActivity.getDistancia() + "m" +
-                    " Tiempo: " + horasFormateadas + ":" + minsFormateados + ":" + segsFormateados;
+                    "      Distancia: " + trainSecondActivity.getDistancia() + "m" +
+                    "\n                             Tiempo: " + horasFormateadas + ":" + minsFormateados + ":" + segsFormateados;
             MainActivity.this.listAdapter.add(textoVisible);
             MainActivity.this.listAdapter.notifyDataSetChanged();
             MainActivity.this.entrenamientos.add(trainSecondActivity);
         }
-        if(resultCode==3){
+        if (resultCode == 3) {
             String id = data.getStringExtra("uuid");
             Entrenamiento trainModificarActivity = mTrainLab.getEntrenamiento(id);
             String horasFormateadas = getString(R.string._00);
@@ -224,16 +222,36 @@ public class MainActivity extends AppCompatActivity {
             MainActivity.this.listAdapter.add(textoVisible);
             MainActivity.this.listAdapter.notifyDataSetChanged();
         }
+        if (resultCode == 4) {
+            nombre = findViewById(R.id.nombreTextView);
+            edad = findViewById(R.id.edadTextView);
+            altura = findViewById(R.id.alturaTextView);
+            peso = findViewById(R.id.pesoTextView);
+            String nombreDato, edadDato, alturaDato, pesoDato;
+            nombreDato = data.getStringExtra("nombre");
+            edadDato = data.getStringExtra("edad");
+            alturaDato = data.getStringExtra("altura");
+            pesoDato = data.getStringExtra("peso");
+
+
+            nombre.setText(nombreDato);
+            edad.setText(edadDato);
+            altura.setText(alturaDato);
+            peso.setText(pesoDato);
+
+
+
+        }
     }
 
     @Override
     public void onBackPressed() {
-        if(doubleBackToExitPressedOnce) {
+        if (doubleBackToExitPressedOnce) {
             super.onBackPressed();
             return;
         }
         this.doubleBackToExitPressedOnce = true;
-        Toast.makeText(this,"Presiona atrás de nuevo para salir.", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Presiona atrás de nuevo para salir.", Toast.LENGTH_SHORT).show();
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -529,7 +547,7 @@ public class MainActivity extends AppCompatActivity {
             AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
             posicion = (int) info.id;
             Entrenamiento train = entrenamientos.get(posicion);
-            String id =train.getIdTrain();
+            String id = train.getIdTrain();
             //Enviar id de la posición a la segunda activity
             Intent intent = new Intent(MainActivity.this, ModificarActivity.class);
             intent.putExtra("uuid", id);
@@ -545,6 +563,26 @@ public class MainActivity extends AppCompatActivity {
 
             entrenamientos.remove(posicion);
             listAdapter.notifyDataSetChanged();
+        } else if (item.getItemId() == R.id.datosPersonales) {
+            //Lamzar nueva activity y guardar los datos en las shared
+            nombre = findViewById(R.id.nombreTextView);
+            edad = findViewById(R.id.edadTextView);
+            altura = findViewById(R.id.alturaTextView);
+            peso = findViewById(R.id.pesoTextView);
+            String textoNombre = nombre.getText().toString();
+            String textoEdad = edad.getText().toString();
+            String textoAltura = altura.getText().toString();
+            String textoPeso = peso.getText().toString();
+
+            Intent intent = new Intent(MainActivity.this, DatosPersonalesActivity.class);
+            intent.putExtra("nombre", textoNombre)
+                    .putExtra("edad", textoEdad)
+                    .putExtra("altura", textoAltura)
+                    .putExtra("peso", textoPeso);
+            startActivityForResult(intent, 4);
+            iniciarDatosPersonales();
+
+
         } else {
             return false;
         }
@@ -561,39 +599,23 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.stats) {
-            double contadorKm = 0;
-            double contadorMins = 0;
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            int distanciaTotal = kmTotales();
+            double minsKmtotales = minutosKmTotales();
 
-            TextView title = new TextView(this);
-            title.setText(R.string.estadisticas);
-            title.setTextSize(25);
-            title.setPadding(25, 25, 25, 25);
-            title.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-            title.setTextColor(getResources().getColor(R.color.blanco));
-            title.setGravity(Gravity.CENTER);
-            builder.setCustomTitle(title);
+            double velocidadeMediaKMH = calcularMediaVelocidadesKMH();
+            double tiempoTotalMinutos = tiempoTotalMinutos();
+            double tiempoTotalHoras = tiempoTotalHoras();
 
+            Intent intent = new Intent(MainActivity.this, EstadisticasActivity.class);
+            intent.putExtra("distanciaTotal", distanciaTotal)
+                    .putExtra("minsKmtotales", minsKmtotales)
+                    .putExtra("tiempoTotalMinutos", tiempoTotalMinutos)
+                    .putExtra("tiempoTotalHoras", tiempoTotalHoras)
+                    .putExtra("mediaVelocidadesKMH", velocidadeMediaKMH);
 
-            View customLayout = getLayoutInflater().inflate(R.layout.stats, null);
-            builder.setView(customLayout);
-            final TextView kmTotales = customLayout.findViewById(R.id.resultadoKmTotales);
-            final TextView minsKm = customLayout.findViewById(R.id.resultadoMinsKm);
-            for (Entrenamiento ent : entrenamientos) {
-                contadorKm = contadorKm + ent.getDistancia();
-                contadorMins = contadorMins + ent.getMinutos() + (ent.getHoras() * 60);
-            }
-            final double finalContadorKm = contadorKm / 1000;
-            final double minutosXkm = contadorMins / finalContadorKm;
-            kmTotales.setText(String.valueOf(finalContadorKm));
-            if (contadorMins == 0 || finalContadorKm == 0) {
-                minsKm.setText(R.string._00);
-            } else {
-                minsKm.setText(String.format("%.2f", minutosXkm));
-            }
-            builder.setPositiveButton(R.string.alDiag_posButton, null);
-            builder.create().show();
+            startActivity(intent);
             return true;
+
         } else if (id == R.id.add) {
             Intent intent = new Intent(MainActivity.this, AddActivity.class);
             startActivityForResult(intent, 2);
@@ -625,7 +647,7 @@ public class MainActivity extends AppCompatActivity {
 //                    modificar();
 
                     Entrenamiento train = entrenamientos.get(posicion);
-                    String id =train.getIdTrain();
+                    String id = train.getIdTrain();
                     //Enviar id de la posición a la segunda activity
                     Intent intent = new Intent(MainActivity.this, ModificarActivity.class);
                     intent.putExtra("uuid", id);
@@ -687,6 +709,22 @@ public class MainActivity extends AppCompatActivity {
             builder.create().show();
 
             return true;
+        } else if (item.getItemId() == R.id.datosPersonales) {
+            //Lamzar nueva activity y guardar los datos en las shared
+
+            String textoNombre = nombre.getText().toString();
+            String textoEdad = edad.getText().toString();
+            String textoAltura = altura.getText().toString();
+            String textoPeso = peso.getText().toString();
+
+            Intent intent = new Intent(MainActivity.this, DatosPersonalesActivity.class);
+            intent.putExtra("nombre", textoNombre)
+                    .putExtra("edad", textoEdad)
+                    .putExtra("altura", textoAltura)
+                    .putExtra("peso", textoPeso);
+            startActivityForResult(intent, 4);
+
+            return true;
         } else {
             return false;
         }
@@ -710,5 +748,63 @@ public class MainActivity extends AppCompatActivity {
             }
         }, year, month, day);
         datePickerDialog.show();
+    }
+
+
+    private double calcularMediaVelocidadesKMH(){
+        double velocidadMediaTotal = 0.0;
+        for (Entrenamiento entrenamiento : entrenamientos){
+            double velodidadMedia =  ((double)(entrenamiento.getDistancia()/1000)/(double)(entrenamiento.getHoras()+(entrenamiento.getMinutos()/60)+(entrenamiento.getSegundos()/3600)));
+            velocidadMediaTotal += velodidadMedia;
+        }
+        return velocidadMediaTotal/entrenamientos.size();
+    }
+
+    private int kmTotales(){
+        int kmTotales = 0;
+        for (Entrenamiento entrenamiento : entrenamientos){
+            int km = entrenamiento.getDistancia();
+            kmTotales += km;
+        }
+        return kmTotales;
+    }
+
+    private double minutosKmTotales(){
+        double minsKmTotales = 0;
+        for (Entrenamiento entrenamiento : entrenamientos){
+            double minsKm = entrenamiento.getMinsKm();
+            minsKmTotales += minsKm;
+        }
+        return minsKmTotales;
+    }
+    private double tiempoTotalMinutos (){
+        double minutosTotales = 0.0;
+        for (Entrenamiento entrenamiento : entrenamientos){
+            double minutos = (double) ( (entrenamiento.getHoras()*60) + (entrenamiento.getMinutos()) + (entrenamiento.getSegundos()/60));
+            minutosTotales += minutos;
+        }
+        return minutosTotales;
+    }
+    private double tiempoTotalHoras (){
+        double horasTotales = 0.0;
+        for (Entrenamiento entrenamiento : entrenamientos){
+            double horas = (double) ( (entrenamiento.getHoras()) + (entrenamiento.getMinutos()/60) + (entrenamiento.getSegundos()/3600));
+            horasTotales += horas;
+        }
+        return horasTotales;
+    }
+
+    private void iniciarDatosPersonales(){
+        String textoNombre = nombre.getText().toString();
+        String textoEdad = edad.getText().toString();
+        String textoAltura = altura.getText().toString();
+        String textoPeso = peso.getText().toString();
+
+        Intent intent = new Intent(MainActivity.this, DatosPersonalesActivity.class);
+        intent.putExtra("nombre", textoNombre)
+                .putExtra("edad", textoEdad)
+                .putExtra("altura", textoAltura)
+                .putExtra("peso", textoPeso);
+        startActivityForResult(intent, 4);
     }
 }

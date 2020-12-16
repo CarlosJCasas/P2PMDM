@@ -9,7 +9,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".UI.ModificarActivity"></activity>
+        <activity
+            android:name=".UI.DatosPersonalesActivity"
+            android:parentActivityName=".UI.MainActivity"
+            android:label="Datos personales" />
+        <activity android:name=".UI.ModificarActivity"
+            android:parentActivityName=".UI.MainActivity"/>
         <activity
             android:name=".UI.EstadisticasActivity"
             android:label="Estadisticas generales"

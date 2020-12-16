@@ -13,7 +13,7 @@
             android:id="@+id/kmTotales"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/kmTotales"
+            android:text="@string/distanciaTxt"
             android:layout_marginTop="20dp"
             android:layout_marginStart="15dp"
             android:layout_marginBottom="15dp"

@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@color/blanco"
     tools:layout_editor_absoluteX="1dp"
     tools:layout_editor_absoluteY="1dp">
 
@@ -20,25 +21,40 @@
         android:layout_marginTop="10dp"
         android:layout_marginEnd="10dp"
         android:focusable="true"
+        android:padding="10dp"
         android:focusableInTouchMode="true">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/nombre"
+
             android:textSize="20sp" />
 
-        <EditText
-            android:id="@+id/nombreEd"
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/nombreTextView"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
-            android:inputType="textPersonName"
             android:maxLines="1"
             android:maxLength="28"
-            android:nextFocusDown="@id/edadEd"
+            android:textSize="20sp"
+            android:layout_weight="1"
+
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:text="TextView"
+            android:nextFocusDown="@id/edadTextView"
             android:imeOptions="actionNext"/>
+
+        <ImageButton
+            android:id="@+id/botonEditar"
+            android:layout_width="wrap_content"
+            android:background="@color/blanco"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="15dp"
+            app:srcCompat="@drawable/edit24" />
+
+
     </LinearLayout>
 
 
@@ -47,60 +63,87 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/edad"
-            android:textSize="20sp" />
-
-        <EditText
-            android:id="@+id/edadEd"
+        android:orientation="vertical">
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:inputType="number"
-            android:maxLines="1"
-            android:maxLength="2"
-            android:nextFocusRight="@id/alturaEd"
-            android:imeOptions="actionNext"/>
+            android:padding="10dp"
+            android:orientation="horizontal">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/altura"
-            android:textSize="20sp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/edad"
+                android:textSize="20sp" />
 
-        <EditText
-            android:id="@+id/alturaEd"
+            <TextView
+                android:id="@+id/edadTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:maxLines="1"
+                android:maxLength="2"
+                android:textSize="20sp"
+                android:text="TextView"
+                android:paddingStart="10dp"
+                android:nextFocusDown="@id/alturaTextView"
+                android:imeOptions="actionNext" />
+
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:inputType="number"
-            android:maxLines="1"
-            android:maxLength="3"
-            android:nextFocusRight="@id/pesoEd"
-            android:imeOptions="actionNext"/>
+            android:orientation="horizontal"
+            android:padding="10dp">
 
-        <TextView
-            android:id="@+id/pesoTxt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/peso"
-            android:textSize="20sp"
-            tools:ignore="InvalidId" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/altura"
+                android:textSize="20sp" />
 
-        <EditText
-            android:id="@+id/pesoEd"
+            <TextView
+                android:id="@+id/alturaTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="TextView"
+                android:maxLines="1"
+                android:maxLength="3"
+                android:textSize="20sp"
+                android:paddingStart="10dp"
+                android:nextFocusRight="@id/pesoTextView"
+                android:imeOptions="actionNext"/>
+
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:inputType="number"
-            android:maxLines="1"
-            android:maxLength="3"
-           android:imeOptions="actionDone"/>
+            android:orientation="horizontal"
+            android:padding="10dp">
+            <TextView
+                android:id="@+id/pesoTxt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/peso"
+                android:textSize="20sp"
+                tools:ignore="InvalidId" />
 
+            <TextView
+                android:id="@+id/pesoTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="TextView"
+                android:maxLines="1"
+                android:maxLength="3"
+                android:textSize="20sp"
+                android:paddingStart="10dp"
+                android:imeOptions="actionDone" />
+
+        </LinearLayout>
     </LinearLayout>
 
     <ListView
